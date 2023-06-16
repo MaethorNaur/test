@@ -6,6 +6,8 @@ on:
     types: [closed]
 jobs:
   test:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     steps:
@@ -17,6 +19,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: ${{ github.event.pull_request.head.ref }}
+          tag_name: main
           body: |
             Change by ${{ github.event.pull_request.author_association }}
           files: ${{ steps.changed-files.outputs.all_changed_files }}
