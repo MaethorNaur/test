@@ -12,13 +12,16 @@ jobs:
     if: github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v3
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v36
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          name: ${{ github.event.pull_request.head.ref }}
+          name: Nightly - ${{ steps.date.outputs.date }}
           tag_name: nightly
           body: |
             Change by ${{ github.event.pull_request.author_association }}
