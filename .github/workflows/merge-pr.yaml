@@ -1,0 +1,23 @@
+name: PR test
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v36
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ github.event.pull_request.head.ref }}
+          body: |
+            Change by ${{ github.event.pull_request.author_association }}
+          files: ${{ steps.changed-files.outputs.all_changed_files }}
+          prerelease: true
