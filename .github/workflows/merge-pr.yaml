@@ -19,7 +19,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: ${{ github.event.pull_request.head.ref }}
-          tag_name: ${{ github.event.pull_request.head.ref }}
+          tag_name: nightly
           body: |
             Change by ${{ github.event.pull_request.author_association }}
           files: ${{ steps.changed-files.outputs.all_changed_files }}
