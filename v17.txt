@@ -1,0 +1,5 @@
+## What's Changed
+
+- Delete CHANGELOG.md by @MaethorNaur in #16
+
+**Full Changelog**: [v16...v17](https://github.com/MaethorNaur/test/compare/v16...v17)
