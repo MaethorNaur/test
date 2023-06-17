@@ -12,7 +12,7 @@
       ]
     }
   ],
-  "template": "${{CHANGELOG}}\n**Full Changelog**: [${{FROM_TAG}}...${{TO_TAG}}](https://github.com/${{OWNER}}/${{REPO}}/compare/${{FROM_TAG}}...${{TO_TAG}})",
+  "template": "${{CHANGELOG}}**Full Changelog**: [${{FROM_TAG}}...${{TO_TAG}}](https://github.com/${{OWNER}}/${{REPO}}/compare/${{FROM_TAG}}...${{TO_TAG}})",
   "pr_template": "- ${{TITLE}} by @${{AUTHOR}} in #${{NUMBER}}",
   "base_branches": ["main"],
   "tag_resolver": {

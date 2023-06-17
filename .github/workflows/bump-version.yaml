@@ -26,11 +26,12 @@ jobs:
         with:
           configuration: changelog-configuration.json
           toTag: ${{github.head_ref}}
-          outputFile: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - run: |
-          echo ${{steps.github_release.outputs.changelog}}
+          echo "${CHANGELOG/${{github.head_ref}}/${{steps.vars.outputs.version}}}"
+        env:
+          CHANGELOG: ${{steps.github_release.outputs.changelog}}
       # - name: Commit files
       #   run: |
       #     git config --local user.email "github-actions[bot]@users.noreply.github.com"
