@@ -25,11 +25,11 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v4
         with:
           configuration: changelog-configuration.json
-          toTag: ${{github.head_ref}}
+          toTag: ${{github.sha}}
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - run: |
-          echo "${CHANGELOG/${{github.head_ref}}/${{steps.vars.outputs.version}}}"
+          echo "${CHANGELOG/${{github.sha}}/${{steps.vars.outputs.version}}}"
         env:
           CHANGELOG: ${{steps.github_release.outputs.changelog}}
       # - name: Commit files
