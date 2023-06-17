@@ -29,19 +29,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - run: |
-          result=$(echo $CHANGELOG | sed "s/${{github.sha}}/v${{steps.vars.outputs.version}}/g")
-          echo $result > CHANGELOG.md
+          result=$(echo "$CHANGELOG" | sed "s/${{github.sha}}/v${{steps.vars.outputs.version}}/g")
+          echo "$result"
         env:
           CHANGELOG: ${{steps.github_release.outputs.changelog}}
-      - name: Commit files
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add CHANGELOG.md
-          git tag v${{steps.vars.outputs.version}}
-          git commit -a -m "chore(bump): release v${{steps.vars.outputs.version}}"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.PAT }}
-          tags: true
+      # - name: Commit files
+      #   run: |
+      #     git config --local user.email "github-actions[bot]@users.noreply.github.com"
+      #     git config --local user.name "github-actions[bot]"
+      #     git add CHANGELOG.md
+      #     git tag v${{steps.vars.outputs.version}}
+      #     git commit -a -m "chore(bump): release v${{steps.vars.outputs.version}}"
+      # - name: Push changes
+      #   uses: ad-m/github-push-action@master
+      #   with:
+      #     github_token: ${{ secrets.PAT }}
+      #     tags: true
