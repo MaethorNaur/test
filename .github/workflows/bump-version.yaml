@@ -17,6 +17,14 @@ jobs:
           newVersion=$((version+1))
           echo "version=${newVersion}" >> $GITHUB_OUTPUT
           echo $newVersion > version
+      - name: Create Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          configuration: changelog-configuration.json
+          outputFile: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
       - name: Commit files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
