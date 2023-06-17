@@ -2,7 +2,7 @@ name: release
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["iteration-*"]
 jobs:
   test:
     permissions:
@@ -13,8 +13,11 @@ jobs:
       - name: vars
         id: vars
         run: |
-          echo "tag=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+          set +a
+          . ./version.properties
+          set -a
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          body_path: ${{steps.vars.outputs.tag}}.txt
+          body_path: ${{steps.vars.outputs.version_code}}.txt

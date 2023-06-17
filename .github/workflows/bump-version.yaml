@@ -16,10 +16,15 @@ jobs:
       - name: bump version
         id: vars
         run: |
-          version=$(cat version)
-          newVersion=$((version+1))
-          echo "version=${newVersion}" >> $GITHUB_OUTPUT
-          echo $newVersion > version
+          set +a
+          . ./version.properties
+          set -a
+          VERSION_CODE=$((VERSION_CODE+1))
+          VERSION_NAME=$(echo iteration-$((${VERSION_NAME/iteration-/}+1)))
+          echo "VERSION_CODE=$VERSION_CODE" > version.properties
+          echo "VERSION_NAME=$VERSION_NAME" >> version.properties
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "version_name=$VERSION_name" >> $GITHUB_OUTPUT
       - name: Create Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v4
@@ -29,17 +34,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - run: |
-          result=$(echo "$CHANGELOG" | sed "s/${{github.sha}}/v${{steps.vars.outputs.version}}/g")
-          echo "$result" > v${{steps.vars.outputs.version}}.txt
+          result=$(echo "$CHANGELOG" | sed "s/${{github.sha}}/v${{steps.vars.outputs.version_name}}/g")
+          echo "$result" > ${{steps.vars.outputs.version_code}}.txt
         env:
           CHANGELOG: ${{steps.github_release.outputs.changelog}}
       - name: Commit files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add v${{steps.vars.outputs.version}}.txt
-          git commit -a -m "chore(bump): release v${{steps.vars.outputs.version}}"
-          git tag v${{steps.vars.outputs.version}}
+          git add v${{steps.vars.outputs.version_code}}.txt
+          git commit -a -m "chore(bump): release v${{steps.vars.outputs.version_name}}"
+          git tag ${{steps.vars.outputs.version_name}}
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
