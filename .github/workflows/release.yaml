@@ -13,7 +13,7 @@ jobs:
       - name: vars
         id: vars
         run: |
-          echo "tag=${GITHUB_REF/refs\/heads\//}" >> $GITHUB_OUTPUT
+          echo "tag=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
