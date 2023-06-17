@@ -14,7 +14,7 @@ jobs:
         id: vars
         run: |
           set +a
-          . ./version.properties
+          . ./app/version.properties
           set -a
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           mkdir -p distribution/whatsnew
