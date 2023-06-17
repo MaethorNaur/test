@@ -8,6 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: bump version
         id: vars
@@ -25,4 +26,5 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
+          github_token: ${{ secrets.PAT }}
           tags: true
