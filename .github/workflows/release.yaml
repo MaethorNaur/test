@@ -6,6 +6,9 @@ on:
 jobs:
   test:
     permissions:
+      actions: read
+      issues: read
+      pull-requests: read
       contents: write
     runs-on: ubuntu-latest
     steps:
