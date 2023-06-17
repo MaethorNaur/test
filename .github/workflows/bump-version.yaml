@@ -29,7 +29,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - run: |
-          echo "${CHANGELOG/${{github.sha}}/${{steps.vars.outputs.version}}}"
+          result=$(echo $CHANGELOG | sed "s/${{github.sha}}/v${{steps.vars.outputs.version}}/g")
+          echo $result
         env:
           CHANGELOG: ${{steps.github_release.outputs.changelog}}
       # - name: Commit files
