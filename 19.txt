@@ -1,5 +1,0 @@
-## What's Changed
-
-- Delete version by @MaethorNaur in #17
-
-**Full Changelog**: [v18...viteration-16](https://github.com/MaethorNaur/test/compare/v18...viteration-16)

@@ -16,10 +16,6 @@
   "pr_template": "- ${{TITLE}} by @${{AUTHOR}} in #${{NUMBER}}",
   "base_branches": ["main"],
   "tag_resolver": {
-    "method": "semver",
-    "transformer": {
-      "pattern": "iteration-(\\w+)",
-      "target": "v0.0.$1"
-    }
+    "method": "semver"
   }
 }

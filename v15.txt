@@ -1,5 +1,0 @@
-## What's Changed
-
-- Delete s by @MaethorNaur in #15
-
-**Full Changelog**: [v14...v15](https://github.com/MaethorNaur/test/compare/v14...v15)

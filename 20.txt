@@ -1,7 +1,0 @@
-## What's Changed
-
-- Delete version by @MaethorNaur in #17
-- Create dddd by @MaethorNaur in #18
-- Delete dddd by @MaethorNaur in #19
-
-**Full Changelog**: [v18...viteration-17](https://github.com/MaethorNaur/test/compare/v18...viteration-17)
