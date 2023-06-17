@@ -25,3 +25,8 @@ jobs:
         with:
           force: true
           tags: true
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            Change by ${{ github.event.ref }}
