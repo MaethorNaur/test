@@ -31,7 +31,7 @@ jobs:
           . ./app/version.properties
           set -a
           VERSION_CODE=$((VERSION_CODE+1))
-          VERSION_NAME=${PROVIDED_VERSION:v${VERSION_CODE}.0.0}
+          VERSION_NAME=${PROVIDED_VERSION:-v${VERSION_CODE}.0.0}
           echo "VERSION_CODE=$VERSION_CODE" > app/version.properties
           echo "VERSION_NAME=$VERSION_NAME" >> app/version.properties
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
