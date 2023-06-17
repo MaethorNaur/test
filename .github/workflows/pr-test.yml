@@ -9,14 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Save PR number
-        run: |
-          echo $(date) > test
+      - uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: temurin
+          cache: gradle
+      - run: |
+          ./gradlew assembleDebug
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: test
-          path: test
+          name: apk
+          path: app/build/outputs/apk/app-debug.apk
           retention-days: 7
       - name: Save PR number
         env:
