@@ -45,7 +45,7 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: tech.maethornaur.myapplication
-          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          releaseFiles: "**/app-release.{apk,aab}"
           track: internal
           status: draft
           whatsNewDirectory: distribution/whatsnew
