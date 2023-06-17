@@ -21,9 +21,9 @@ jobs:
           set -a
           VERSION_CODE=$((VERSION_CODE+1))
           echo "VERSION_CODE=$VERSION_CODE" > app/version.properties
-          echo "VERSION_NAME=v${VERSION_NAME}.0.0" >> app/version.properties
+          echo "VERSION_NAME=v${VERSION_CODE}.0.0" >> app/version.properties
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
-          echo "version_name=v${VERSION_NAME}.0.0" >> $GITHUB_OUTPUT
+          echo "version_name=v${VERSION_CODE}.0.0" >> $GITHUB_OUTPUT
       - name: Create Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v4
