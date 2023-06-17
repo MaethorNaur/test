@@ -25,6 +25,7 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v4
         with:
           configuration: changelog-configuration.json
+          toTag: ${{github.head_ref}}
           outputFile: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
