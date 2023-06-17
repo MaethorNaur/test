@@ -57,7 +57,6 @@ jobs:
         with:
           body: ${{steps.github_release.outputs.changelog}}
           files: app/build/outputs/bundle/release/app-release.aab
-      - run: exit 1
   unrelease:
     name: Unrelease if an error happened
     needs: [release]
