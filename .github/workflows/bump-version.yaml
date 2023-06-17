@@ -29,14 +29,16 @@ jobs:
           outputFile: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-      - name: Commit files
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git tag v${{steps.vars.outputs.version}}
-          git commit -a -m "chore(bump): release v${{steps.vars.outputs.version}}"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.PAT }}
-          tags: true
+      - run: |
+          echo ${{steps.github_release.outputs,changelog}}
+      # - name: Commit files
+      #   run: |
+      #     git config --local user.email "github-actions[bot]@users.noreply.github.com"
+      #     git config --local user.name "github-actions[bot]"
+      #     git tag v${{steps.vars.outputs.version}}
+      #     git commit -a -m "chore(bump): release v${{steps.vars.outputs.version}}"
+      # - name: Push changes
+      #   uses: ad-m/github-push-action@master
+      #   with:
+      #     github_token: ${{ secrets.PAT }}
+      #     tags: true
