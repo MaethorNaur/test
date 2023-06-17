@@ -21,7 +21,7 @@ jobs:
           set -a
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           mkdir -p distribution/whatsnew
-          echo "release ${VERSION_NAME}" > distribution/whatsnew/whatsnew-en-US
+          cp metadata/en-US/changelogs/${VERSION_CODE}.txt distribution/whatsnew/whatsnew-en-US
       - uses: actions/setup-java@v3
         with:
           java-version: "17"
