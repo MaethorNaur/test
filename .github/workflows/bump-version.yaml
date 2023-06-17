@@ -1,0 +1,28 @@
+name: bump version
+on: workflow_dispatch
+jobs:
+  release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: bump version
+        id: vars
+        run: |
+          version=$(cat version)
+          newVersion=$((version+1))
+          echo "version=${newVersion}" >> $GITHUB_OUTPUT
+          echo $newVersion > version
+      - name: Commit files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git tag -d ${{steps.vars.outputs.version}}
+          git tag ${{steps.vars.outputs.version}}
+          git commit -a -m "chore(bump): release ${{steps.vars.outputs.version}}"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          force: true
+          tags: true

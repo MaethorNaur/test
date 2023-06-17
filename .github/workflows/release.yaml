@@ -1,0 +1,17 @@
+name: PR test
+
+on:
+  push:
+    tags: ["v**"]
+jobs:
+  test:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            Change by ${{ github.event.ref }}
