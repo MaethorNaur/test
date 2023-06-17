@@ -23,4 +23,4 @@
 - Delete d by @MaethorNaur in #21
 - Delete test.txt by @MaethorNaur in #22
 
-**Full Changelog**: [98fb99a241152fe16267fed0241ac4f08255bce4...vv1.0.0.0.0](https://github.com/MaethorNaur/test/compare/98fb99a241152fe16267fed0241ac4f08255bce4...vv1.0.0.0.0)
+**Full Changelog**: [98fb99a241152fe16267fed0241ac4f08255bce4...v2.0.0](https://github.com/MaethorNaur/test/compare/98fb99a241152fe16267fed0241ac4f08255bce4...v2.0.0)
