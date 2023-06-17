@@ -30,7 +30,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - run: |
-          echo ${{steps.github_release.outputs,changelog}}
+          echo ${{steps.github_release.outputs.changelog}}
       # - name: Commit files
       #   run: |
       #     git config --local user.email "github-actions[bot]@users.noreply.github.com"
