@@ -18,7 +18,7 @@ jobs:
           set -a
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           mkdir -p distribution/whatsnew
-          cp metadata/en-US/changelogs/${VERSION_CODE}.txt distribution/whatsnew/whatsnew-en-US
+          echo "release ${VERSION_NAME}" > distribution/whatsnew/whatsnew-en-US
       - uses: actions/setup-java@v3
         with:
           java-version: "17"
@@ -37,10 +37,6 @@ jobs:
           VIM8_BUILD_KEY_ALIAS: ${{ secrets.ALIAS }}
           VIM8_BUILD_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew bundleRelease
-      - name: Create release
-        uses: softprops/action-gh-release@v1
-        with:
-          body_path: metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
       - name: Google play release
         uses: r0adkll/upload-google-play@v1
         with:
@@ -51,3 +47,7 @@ jobs:
           status: draft
           whatsNewDirectory: distribution/whatsnew
           mappingFile: app/build/outputs/mapping/release/mapping.txt
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
