@@ -4,7 +4,8 @@ on:
   push:
     tags: ["v*"]
 jobs:
-  test:
+  release:
+    name: Deploy the app to Google playstore and create a release
     permissions:
       actions: read
       issues: read
@@ -13,25 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: vars
-        id: vars
-        run: |
-          set +a
-          . ./app/version.properties
-          set -a
-          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
-          mkdir -p distribution/whatsnew
-          cp metadata/en-US/changelogs/${VERSION_CODE}.txt distribution/whatsnew/whatsnew-en-US
       - uses: actions/setup-java@v3
         with:
           java-version: "17"
           distribution: temurin
           cache: gradle
-      - name: Decode Keystore
-        env:
-          ENCODED_STRING: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+      - name: Setup env
         run: |
-          echo "$ENCODED_STRING" > keystore-b64.txt
+          set +a
+          . ./app/version.properties
+          set -a
+          mkdir -p distribution/whatsnew
+          cp metadata/en-US/changelogs/${VERSION_CODE}.txt distribution/whatsnew/whatsnew-en-US
+          echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" > keystore-b64.txt
           base64 -d keystore-b64.txt > app/test.jks
       - name: Build APK
         env:
@@ -62,3 +57,16 @@ jobs:
         with:
           body: ${{steps.github_release.outputs.changelog}}
           files: app/build/outputs/bundle/release/app-release.aab
+      - run: exit 1
+  unrelease:
+    name: Unrelease if an error happened
+    needs: [release]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    if: ${{failure()}}
+    steps:
+      - uses: dev-drprasad/delete-tag-and-release@v1.0.1
+        with:
+          tag_name: ${{github.ref_name}}
+          github_token: ${{ secrets.PAT }}

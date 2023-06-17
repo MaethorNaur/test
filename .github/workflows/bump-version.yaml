@@ -10,7 +10,8 @@ on:
           Release version.
           If not specifid it will bump the previous version_name
 jobs:
-  release:
+  update_version:
+    name: Update app version
     permissions:
       actions: read
       issues: read
@@ -34,17 +35,17 @@ jobs:
           VERSION_NAME=${PROVIDED_VERSION:-v${VERSION_CODE}.0.0}
           echo "VERSION_CODE=$VERSION_CODE" > app/version.properties
           echo "VERSION_NAME=$VERSION_NAME" >> app/version.properties
-          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
-          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_ENV
+          echo "version_name=$VERSION_NAME" >> $GITHUB_ENV
       - run: |
-          echo "${{ github.event.inputs.whatsnew }}" > metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
+          echo "${{ github.event.inputs.whatsnew }}" > metadata/en-US/changelogs/${{env.version_code}}.txt
       - name: Commit files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
-          git commit -a -m "chore(bump): release ${{steps.vars.outputs.version_name}}"
-          git tag ${{steps.vars.outputs.version_name}}
+          git add metadata/en-US/changelogs/${{env.version_code}}.txt
+          git commit -a -m "chore(bump): release ${{env.version_name}}"
+          git tag ${{env.version_name}}
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:

@@ -5,7 +5,8 @@ on:
     branches: [main]
     types: [closed]
 jobs:
-  test:
+  build:
+    name: Build nightly version
     permissions:
       actions: read
       issues: read
@@ -15,21 +16,16 @@ jobs:
     if: github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v3
-      - name: Get current date
-        id: date
-        run: |
-          echo "::set-output name=date::$(date +'%Y-%m-%d')"
-          echo "::set-output name=ts::$(date +%s)"
       - uses: actions/setup-java@v3
         with:
           java-version: "17"
           distribution: temurin
           cache: gradle
-      - name: Decode Keystore
-        env:
-          ENCODED_STRING: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+      - name: Setup env
         run: |
-          echo "$ENCODED_STRING" > keystore-b64.txt
+          echo "date=$(date +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+          echo "ts=$(date +%s)" >> $GITHUB_ENV
+          echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" > keystore-b64.txt
           base64 -d keystore-b64.txt > ./app/test.jks
       - name: Build APK
         env:
@@ -44,12 +40,11 @@ jobs:
         with:
           configuration: changelog-configuration.json
           toTag: ${{github.sha}}
-
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          name: Nightly - ${{ steps.date.outputs.date }}
-          tag_name: nightly-${{ steps.date.outputs.ts }}
+          name: Nightly - ${{ env.date }}
+          tag_name: nightly-${{ env.ts }}
           body: ${{steps.github_release.outputs.changelog}}
           prerelease: true
           files: app/build/outputs/apk/release/app-release.apk
