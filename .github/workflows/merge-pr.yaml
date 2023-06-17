@@ -1,4 +1,4 @@
-name: PR test
+name: Merge test
 
 on:
   pull_request:

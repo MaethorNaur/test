@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: bump version
         id: vars
         run: |
@@ -25,8 +27,3 @@ jobs:
         with:
           force: true
           tags: true
-      - name: Create release
-        uses: softprops/action-gh-release@v1
-        with:
-          body: |
-            Change by ${{ github.event.ref }}
