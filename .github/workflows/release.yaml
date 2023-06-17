@@ -47,7 +47,15 @@ jobs:
           status: draft
           whatsNewDirectory: distribution/whatsnew
           mappingFile: app/build/outputs/mapping/release/mapping.txt
+      - name: Create Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          configuration: changelog-configuration.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          body_path: metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
+          body: ${{steps.github_release.outputs.changelog}}
+          files: app/build/outputs/bundle/release/app-release.aab
