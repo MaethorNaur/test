@@ -34,7 +34,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - run: |
-          result=$(echo "$CHANGELOG" | sed "s/${{github.sha}}/v${{steps.vars.outputs.version_name}}/g")
+          result=$(echo "$CHANGELOG" | sed "s/${{github.sha}}/${{steps.vars.outputs.version_name}}/g")
           echo "$result" > ${{steps.vars.outputs.version_code}}.txt
         env:
           CHANGELOG: ${{steps.github_release.outputs.changelog}}
@@ -43,7 +43,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add ${{steps.vars.outputs.version_code}}.txt
-          git commit -a -m "chore(bump): release v${{steps.vars.outputs.version_name}}"
+          git commit -a -m "chore(bump): release ${{steps.vars.outputs.version_name}}"
           git tag ${{steps.vars.outputs.version_name}}
       - name: Push changes
         uses: ad-m/github-push-action@master
