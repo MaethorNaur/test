@@ -4,13 +4,25 @@ on:
   push:
     tags: ["v*"]
 jobs:
-  release:
+  version:
+    name: Get app version
+    runs-on: ubuntu-latest
+    outputs:
+      version_code: ${{steps.vars.outputs.version_code}}
+      version_name: ${{steps.vars.outputs.version_name}}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get version
+        id: vars
+        run: |
+          set +a
+          . ./app/version.properties
+          set -a
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+  playstore:
     name: Deploy the app to Google playstore and create a release
-    permissions:
-      actions: read
-      issues: read
-      pull-requests: read
-      contents: write
+    needs: [version]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,11 +33,8 @@ jobs:
           cache: gradle
       - name: Setup env
         run: |
-          set +a
-          . ./app/version.properties
-          set -a
           mkdir -p distribution/whatsnew
-          cp metadata/en-US/changelogs/${VERSION_CODE}.txt distribution/whatsnew/whatsnew-en-US
+          cp metadata/en-US/changelogs/${{needs.version.outputs.version_code}}.txt distribution/whatsnew/whatsnew-en-US
           echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" > keystore-b64.txt
           base64 -d keystore-b64.txt > app/test.jks
       - name: Build APK
@@ -45,6 +54,48 @@ jobs:
           # status: draft
           whatsNewDirectory: distribution/whatsnew
           mappingFile: app/build/outputs/mapping/release/mapping.txt
+      - name: Upload artifact aab
+        uses: actions/upload-artifact@v3
+        with:
+          name: aab
+          path: app/build/outputs/bundle/release/app-release.aab
+  f_droid:
+    name: Release to F-f_droid
+    needs: [version]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{secrets.PAT}}
+          repository: MaethorNaur/MaethorNaur.github.io
+          persist-credentials: false
+      - run: |
+          echo "{\"version_code\": ${{needs.version.version_code}}, \"version_name\": \"${{needs.version.version_name}}\"}" > version.json
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add version.json
+          git commit -a -m "chore: release ${{needs.version.version_name}}"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PAT }}
+          repository: MaethorNaur/MaethorNaur.github.io
+  relase:
+    name: Create github release
+    needs: [f_droid, playstore]
+    permissions:
+      actions: read
+      issues: read
+      pull-requests: read
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download artifact
+        id: aab
+        uses: actions/download-artifact@v3
+        with:
+          name: aab
       - name: Create Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v4
@@ -56,10 +107,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body: ${{steps.github_release.outputs.changelog}}
-          files: app/build/outputs/bundle/release/app-release.aab
+          files: ${{ steps.aab.outputs.download-paths }}
   unrelease:
     name: Unrelease if an error happened
-    needs: [release]
+    needs: [f_droid, playstore, relase]
     permissions:
       contents: write
     runs-on: ubuntu-latest
