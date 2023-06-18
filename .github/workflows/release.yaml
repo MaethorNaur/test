@@ -60,7 +60,7 @@ jobs:
           name: aab
           path: app/build/outputs/bundle/release/app-release.aab
   f_droid:
-    name: Release to F-f_droid
+    name: Release to F-droid
     needs: [version]
     runs-on: ubuntu-latest
     steps:
