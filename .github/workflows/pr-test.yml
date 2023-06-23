@@ -4,9 +4,10 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "**.java"
       - "**.gradle"
-      - "app/src/main/**.xml"
+      - "app/**"
+    paths-ignore:
+      - "app/src/main/**.yaml"
 jobs:
   test:
     runs-on: ubuntu-latest
