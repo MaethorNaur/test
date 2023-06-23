@@ -4,6 +4,10 @@ on:
   pull_request_target:
     branches: [main]
     types: [closed]
+    paths:
+      - "**.gradle"
+      - "app/**"
+      - "!app/src/main/**.yaml"
 jobs:
   build:
     name: Build nightly version
