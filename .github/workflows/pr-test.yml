@@ -6,8 +6,7 @@ on:
     paths:
       - "**.gradle"
       - "app/**"
-    paths-ignore:
-      - "app/src/main/**.yaml"
+      - "!app/src/main/**.yaml"
 jobs:
   test:
     runs-on: ubuntu-latest
