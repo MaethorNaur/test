@@ -3,7 +3,10 @@ name: PR test
 on:
   pull_request:
     branches: [main]
-
+    paths:
+      - "**.java"
+      - "**.gradle"
+      - "app/src/main/**.xml"
 jobs:
   test:
     runs-on: ubuntu-latest
