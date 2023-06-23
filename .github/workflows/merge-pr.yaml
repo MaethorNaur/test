@@ -7,7 +7,6 @@ on:
     paths:
       - "**.gradle"
       - "app/**"
-      - "!app/src/main/**.yaml"
 jobs:
   build:
     name: Build nightly version
