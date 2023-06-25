@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Google play promote
-        uses: The-Vincit-Group/promote-google-play-track-action@v1.0.0-alpha.2
+        uses: The-Vincit-Group/promote-google-play-track-action@v1.0.0-alpha
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: tech.maethornaur.myapplication
