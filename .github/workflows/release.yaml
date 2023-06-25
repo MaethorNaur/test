@@ -51,9 +51,9 @@ jobs:
         with:
           github_token: ${{ secrets.PAT }}
           repository: MaethorNaur/MaethorNaur.github.io
-  relase:
+  release:
     name: Create github release
-    needs: [f_droid, playstore]
+    needs: [f_droid, playstore, version]
     if: ${{always()}}
     permissions:
       contents: write
