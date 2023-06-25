@@ -23,7 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: touch serviceAccountJsonPlainText.json
+      - run: |
+          pwd
+          ls -alh
       - name: Google play promote
         uses: The-Vincit-Group/promote-google-play-track-action@v1.0.0-alpha.2
         with:
