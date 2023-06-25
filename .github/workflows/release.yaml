@@ -54,6 +54,7 @@ jobs:
   relase:
     name: Create github release
     needs: [f_droid, playstore]
+    if: ${{always()}}
     permissions:
       actions: read
       issues: read
