@@ -22,14 +22,13 @@ jobs:
     name: Deploy the app to Google playstore and create a release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
       - name: Google play promote
-        uses: The-Vincit-Group/promote-google-play-track-action@develop
+        uses: kevin-david/promote-play-release@v1.0.0
         with:
-          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-          packageName: tech.maethornaur.myapplication
-          fromTrack: internal
-          toTrack: beta
+          service-account-json-raw: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          package-name: tech.maethornaur.myapplication
+          from-track: internal
+          to-track: beta
   f_droid:
     name: Release to F-droid
     needs: [version]
