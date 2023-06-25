@@ -28,7 +28,7 @@ jobs:
           service-account-json-raw: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           package-name: tech.maethornaur.myapplication
           from-track: internal
-          to-track: beta
+          to-track: alpha
   f_droid:
     name: Release to F-droid
     needs: [version]
