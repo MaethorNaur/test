@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: touch serviceAccountJsonPlainText.json
       - name: Google play promote
         uses: The-Vincit-Group/promote-google-play-track-action@v1.0.0-alpha.2
         with:
@@ -56,25 +57,9 @@ jobs:
     needs: [f_droid, playstore]
     if: ${{always()}}
     permissions:
-      actions: read
-      issues: read
-      pull-requests: read
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Download artifact
-        id: aab
-        uses: actions/download-artifact@v3
-        with:
-          name: aab
-      - name: Create Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v4
-        with:
-          configuration: changelog-configuration.json
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
       - name: Create release
         uses: tubone24/update_release@v1.3.1
         env:
