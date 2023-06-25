@@ -1,4 +1,4 @@
-name: prerelease
+name: Pre-release deployment
 
 on:
   push:
@@ -6,22 +6,9 @@ on:
 jobs:
   version:
     name: Get app version
-    runs-on: ubuntu-latest
-    outputs:
-      version_code: ${{steps.vars.outputs.version_code}}
-      version_name: ${{steps.vars.outputs.version_name}}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Get version
-        id: vars
-        run: |
-          set +a
-          . ./app/version.properties
-          set -a
-          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
-          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+    uses: ./.github/workflows/extract-version.yaml
   playstore:
-    name: Deploy the app to Google playstore and create a release
+    name: Deploy the app to Google playstore
     needs: [version]
     runs-on: ubuntu-latest
     steps:
@@ -36,10 +23,9 @@ jobs:
           mkdir -p distribution/whatsnew
           cp metadata/en-US/changelogs/${{needs.version.outputs.version_code}}.txt distribution/whatsnew/whatsnew-en-US
           echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" > keystore-b64.txt
-          base64 -d keystore-b64.txt > app/test.jks
+          base64 -d keystore-b64.txt > 8vim/test.jks
       - name: Build APK
         env:
-          VIM8_BUILD_KEYSTORE_FILE: ./test.jks
           VIM8_BUILD_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           VIM8_BUILD_KEY_ALIAS: ${{ secrets.ALIAS }}
           VIM8_BUILD_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -49,16 +35,16 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: tech.maethornaur.myapplication
-          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          releaseFiles: 8vim/build/outputs/bundle/release/8vim-release.aab
           track: internal
           # status: draft
           whatsNewDirectory: distribution/whatsnew
-          mappingFile: app/build/outputs/mapping/release/mapping.txt
+          mappingFile: 8vim/build/outputs/mapping/release/mapping.txt
       - name: Upload artifact aab
         uses: actions/upload-artifact@v3
         with:
           name: aab
-          path: app/build/outputs/bundle/release/app-release.aab
+          path: 8vim/build/outputs/bundle/release/8vim-release.aab
   release:
     name: Create github release
     needs: [playstore]

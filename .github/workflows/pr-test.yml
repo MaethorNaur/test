@@ -5,9 +5,21 @@ on:
     branches: [main]
     paths:
       - "**.gradle"
-      - "app/**"
-      - "!app/src/main/**.yaml"
+      - "8vim/**"
 jobs:
+  validate_layouts:
+    name: Validate language layouts
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: GrantBirki/json-yaml-validate@v1.5.0
+        with:
+          json_schema: ./8vim/src/main/resources/schema.json
+          comment: "true"
+          yaml_as_json: "true"
+          base_dir: ./8vim/src/main/res/raw
   test:
     runs-on: ubuntu-latest
     steps:
@@ -23,7 +35,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: apk
-          path: app/build/outputs/apk/app-debug.apk
+          path: 8vim/build/outputs/apk/8vim-debug.apk
           retention-days: 7
       - name: Save PR number
         env:
