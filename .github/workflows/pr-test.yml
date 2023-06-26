@@ -21,6 +21,7 @@ jobs:
           yaml_as_json: "true"
           base_dir: ./8vim/src/main/res/raw
   test:
+    name: 8VIM tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
