@@ -37,24 +37,7 @@ jobs:
           java-version: "17"
           distribution: temurin
           cache: gradle
-      - run: |
-          ./gradlew testRcDebugUnitTest
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: apk
-          path: 8vim/build/outputs/apk/rc/8vim-rc-debug.apk
-          retention-days: 7
-      - name: Save PR number
-        env:
-          PR_NUMBER: ${{ github.event.number }}
-        run: |
-          mkdir -p ./pr
-          echo $PR_NUMBER > ./pr/pr_number
-      - uses: actions/upload-artifact@v3
-        with:
-          name: pr_number
-          path: pr/
+      - run: ./gradlew testRcDebugUnitTest
   upload_artificat:
     needs: [validate_layouts, test]
     runs-on: ubuntu-latest
