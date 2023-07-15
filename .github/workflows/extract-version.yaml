@@ -10,6 +10,10 @@ on:
         value: ${{jobs.version.outputs.patch}}
       rc:
         value: ${{jobs.version.outputs.rc}}
+      version_code:
+        value: ${{jobs.version.outputs.version_code}}
+      version_name:
+        value: ${{jobs.version.outputs.version_name}}
 jobs:
   version:
     name: Get app version
@@ -19,6 +23,8 @@ jobs:
       minor: ${{steps.vars.outputs.minor}}
       patch: ${{steps.vars.outputs.patch}}
       rc: ${{steps.vars.outputs.rc}}
+      version_code: ${{steps.vars.outputs.version_code}}
+      version_name: ${{steps.vars.outputs.version_name}}
     steps:
       - uses: actions/checkout@v3
       - name: Get version
@@ -31,3 +37,5 @@ jobs:
           echo "minor=$MINOR" >> $GITHUB_OUTPUT
           echo "patch=$PATCH" >> $GITHUB_OUTPUT
           echo "rc=$RC" >> $GITHUB_OUTPUT
+          echo "version_code=$((100000 * $RC + 10000 * $MAJOR + 100 * $MINOR + $PATCH))" >> $GITHUB_OUTPUT
+          echo "version_name=$MAJOR.$MINOR.$PATCH" >> $GITHUB_OUTPUT
