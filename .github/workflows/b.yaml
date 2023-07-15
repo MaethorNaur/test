@@ -3,7 +3,11 @@ on: workflow_dispatch
 
 jobs:
   call:
-    uses: ./.github/workflows/a.yaml
+    uses: ./.github/workflows/build_release.yaml
+    with:
+      target: rc
+      cmd: bundleRcRelease assembleRcRelease
+    secrets: inherit
   r:
     needs: call
     runs-on: ubuntu-latest
@@ -12,7 +16,7 @@ jobs:
         id: aab
         uses: actions/download-artifact@v3
         with:
-          name: shared
+          name: aab
           path: shared/
       - run: |
           ls -alh shared/
