@@ -40,6 +40,7 @@ jobs:
           PATCH: ${{needs.version.outputs.patch}}
           VERSION: ${{ github.event.inputs.version }}
         run: |
+          RC=0
           if [ $VERSION = "patch" ]
           then
             PATCH=$(($PATCH+1))
@@ -53,7 +54,7 @@ jobs:
               MAJOR=$(($MAJOR+1))
             fi
           fi
-          echo "version_code=$((100000 * $RC + 10000 * ${{needs.version.outputs.major}} + 100 * ${{needs.version.outputs.minor}} + ${{needs.version.outputs.patch}}))" >> $GITHUB_ENV
+          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH+ $RC))" >> $GITHUB_OUTPUT
           echo "version_name=${{needs.version.outputs.major}}.${{needs.version.outputs.minor}}.${{needs.version.outputs.patch}}" >> $GITHUB_ENV
           echo $GITHUB_ENV
       - run: |
