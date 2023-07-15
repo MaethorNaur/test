@@ -89,6 +89,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: aab
+          path: aab/
       - name: Create Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v4
@@ -100,7 +101,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body: ${{steps.github_release.outputs.changelog}}
-          files: ${{ steps.aab.outputs.download-paths }}
+          files: ${{ steps.aab.outputs.download-paths }}/c*
           prerelease: ${{needs.version.outputs.rc > 0}}
   # unrelease:
   #   name: Unrelease if an error happened
