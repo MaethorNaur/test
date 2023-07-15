@@ -8,7 +8,7 @@ on:
       - "8vim/**"
 jobs:
   changes:
-    name: Detect changed filters
+    name: Detect changed files
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
@@ -72,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: apk
-          path: 8vim/build/outputs/apk/rc/8vim-rc-debug.apk
+          path: 8vim/build/outputs/apk/rc/debug/8vim-rc-debug.apk
           retention-days: 7
       - name: Save PR number
         env:
