@@ -43,7 +43,7 @@ jobs:
           mkdir -p distribution/whatsnew
           cp metadata/en-US/changelogs/${{needs.version.outputs.version_code}}.txt distribution/whatsnew/whatsnew-en-US
           echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" > keystore-b64.txt
-          base64 -d keystore-b64.txt > 8vim/test.jks
+          base64 -d keystore-b64.txt > 8vim/8vim.jks
       - name: Build APK
         env:
           VIM8_BUILD_KEYSTORE_FILE: ./8vim.jks
