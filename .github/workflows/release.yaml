@@ -102,5 +102,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body: ${{steps.github_release.outputs.changelog}}
-          files: ${{ steps.aab.outputs.download-paths }}/*
+          files: ${{ steps.aab.outputs.download-paths }}/**
           prerelease: ${{needs.version.outputs.rc > 0}}
