@@ -55,7 +55,7 @@ jobs:
           distribution: temurin
           cache: gradle
       - run: ./gradlew testRcDebugUnitTest
-  upload_artificat:
+  upload_artifact:
     if: ${{ !cancelled() && (needs.test.result == 'success' || needs.validate_layouts.result == 'success') }}
     needs: [validate_layouts, test]
     runs-on: ubuntu-latest
