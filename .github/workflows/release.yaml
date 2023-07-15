@@ -75,7 +75,7 @@ jobs:
   release:
     name: Create github release
     needs: [playstore, f_droid, version]
-    if: ${{ !cancelled() && needs.f_droid.result != 'failure' }}
+    if: ${{ !cancelled() && needs.playstore.result == 'success' && needs.f_droid.result != 'failure' }}
     permissions:
       actions: read
       issues: read
