@@ -57,7 +57,7 @@ jobs:
           cache: gradle
       - run: ./gradlew testRcDebugUnitTest
   upload_artificat:
-    if: ${{ !cancelled() && (needs.test.result != 'failure' && needs.validate_layouts.result != 'failure') }}
+    if: ${{ !cancelled() && (needs.test.result == 'success' || needs.validate_layouts.result == 'success') }}
     needs: [validate_layouts, test]
     runs-on: ubuntu-latest
     steps:
