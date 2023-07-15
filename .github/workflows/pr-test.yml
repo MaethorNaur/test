@@ -14,7 +14,15 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
-      - uses: MaethorNaur/json-yaml-validate@main
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            yaml:
+              - added|modified: '8vim/src/main/res/raw/*.ya?ml'
+              - added|modified: '8vim/src/main/resources/schema.json'
+      - if: steps.changes.outputs.yaml == 'true'
+        uses: 8VIM/json-yaml-validate@main
         with:
           json_schema: ./8vim/src/main/resources/schema.json
           comment: "true"
@@ -30,12 +38,40 @@ jobs:
           distribution: temurin
           cache: gradle
       - run: |
-          ./gradlew assembleDebug
+          ./gradlew testRcDebugUnitTest
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: apk
-          path: 8vim/build/outputs/apk/8vim-debug.apk
+          path: 8vim/build/outputs/apk/rc/8vim-rc-debug.apk
+          retention-days: 7
+      - name: Save PR number
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          mkdir -p ./pr
+          echo $PR_NUMBER > ./pr/pr_number
+      - uses: actions/upload-artifact@v3
+        with:
+          name: pr_number
+          path: pr/
+  upload_artificat:
+    needs: [validate_layouts, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: temurin
+          cache: gradle
+      - run: |
+          ./gradlew assembleRcDebug
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk
+          path: 8vim/build/outputs/apk/rc/8vim-rc-debug.apk
           retention-days: 7
       - name: Save PR number
         env:

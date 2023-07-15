@@ -35,14 +35,14 @@ jobs:
         run: unzip pr_number.zip
       - name: Get artifact link
         id: artifact
-        run: |          
+        run: |
           curl \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
           -s \
           "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.event.workflow_run.id}}/artifacts" \
-          | jq -c '.artifacts[] | select(.name =="test")' > artifact.json
-        
+          | jq -c '.artifacts[] | select(.name =="apk")' > artifact.json
+
           echo "url=https://github.com/${{ github.repository }}/suites/${{ github.event.workflow_run.check_suite_id }}/artifacts/$(jq -j '.id' artifact.json)" >> $GITHUB_OUTPUT
           echo "expires=$(jq -j '.expires_at' artifact.json)" >> $GITHUB_OUTPUT
           echo "pr_number=$(cat pr_number)" >> $GITHUB_OUTPUT

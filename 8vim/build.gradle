@@ -3,19 +3,33 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+apply plugin: 'checkstyle'
+
+check.dependsOn('checkstyle')
+
+checkstyle {
+    toolVersion = '10.12.0'
+}
+
 android {
+    def versionPropsFile = file('version.properties')
+    Properties versionProps = new Properties()
+    versionProps.load(new FileInputStream(versionPropsFile))
+    
+    def versionMajor = versionProps['MAJOR'].toInteger()
+    def versionMinor = versionProps['MINOR'].toInteger()
+    def versionPatch = versionProps['PATCH'].toInteger()
+    def versionRc = versionProps['RC'].toInteger()
+
     namespace 'tech.maethornaur.myapplication'
     compileSdk 33
-    def versionPropsFile = file('version.properties')
-    def Properties versionProps = new Properties()
-    versionProps.load(new FileInputStream(versionPropsFile))
     defaultConfig {
         applicationId "tech.maethornaur.myapplication"
         minSdk 24
         targetSdk 33
-        versionCode versionProps['VERSION_CODE'].toInteger()
-        versionName versionProps['VERSION_NAME']
-
+        versionCode versionMajor * 10000 + 100 * versionMinor + versionPatch
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        resValue "string", "app_name_with_flavour", "My Application"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -40,6 +54,24 @@ android {
             }
         }
     }
+
+
+    flavorDimensions "version"
+    productFlavors {
+        prod {
+            dimension "version"
+        }
+
+        rc {
+            dimension "version"
+            applicationIdSuffix ".rc"
+            versionNameSuffix "-rc.${versionRc}"
+            resValue "string", "version_name", android.defaultConfig.versionName + versionNameSuffix
+            resValue "string", "app_name_with_flavour", "My Application RC"
+            versionCode 100000 * versionRc + android.defaultConfig.versionCode
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -50,17 +82,35 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+
+    lint {
+        abortOnError true
+        disable 'ObsoleteLintCustomCheck', 'ClickableViewAccessibility', 'VectorPath', 'UnusedResources', 'GradleDependency', 'OldTargetApi'
+        htmlReport true
+        warningsAsErrors true
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.2'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.2'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.6.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+task checkstyle(type: Checkstyle) {
+    showViolations = true
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+    exclude '**/R.java'
+
+    classpath = files()
 }
