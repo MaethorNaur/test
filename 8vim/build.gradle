@@ -27,7 +27,7 @@ android {
         applicationId "tech.maethornaur.myapplication"
         minSdk 24
         targetSdk 33
-        versionCode versionMajor * 10000 + 100 * versionMinor + versionPatch
+        versionCode versionMajor * 1000000 + 10000 * versionMinor + 100 * versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         resValue "string", "app_name_with_flavour", "My Application"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -68,7 +68,7 @@ android {
             versionNameSuffix "-rc.${versionRc}"
             resValue "string", "version_name", android.defaultConfig.versionName + versionNameSuffix
             resValue "string", "app_name_with_flavour", "My Application RC"
-            versionCode 100000 * versionRc + android.defaultConfig.versionCode
+            versionCode versionRc + android.defaultConfig.versionCode
         }
     }
 
