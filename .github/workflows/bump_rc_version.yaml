@@ -55,7 +55,7 @@ jobs:
           echo "RC=$RC" >> 8vim/version.properties
 
           echo "version_code=$((100000 * $RC + 10000 * ${{needs.version.outputs.major}} + 100 * ${{needs.version.outputs.minor}} + ${{needs.version.outputs.patch}}))" >> $GITHUB_ENV
-          echo "version_name=${{needs.version.outputs.major}}.${{needs.version.outputs.minor}}.${{needs.version.outputs.patch}}-rc.${rc}" >> $GITHUB_ENV
+          echo "version_name=${{needs.version.outputs.major}}.${{needs.version.outputs.minor}}.${{needs.version.outputs.patch}}-rc.${RC}" >> $GITHUB_ENV
       - run: |
           echo "${{ github.event.pull_request.title }}" > metadata/en-US/changelogs/${{env.version_code}}.txt
       - name: Commit files
