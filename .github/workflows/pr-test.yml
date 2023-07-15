@@ -7,28 +7,45 @@ on:
       - "**.gradle"
       - "8vim/**"
 jobs:
+  changes:
+    name: Detect changed filters
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      src: ${{ steps.changes.outputs.src }}
+      yaml: ${{ steps.changes.outputs.yaml }}
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            src:
+              - 8vim/**/*.java
+              - 8vim/**/*.xml
+              - "**.gradle"
+            yaml:
+              - added|modified: '8vim/src/main/res/raw/*.ya?ml'
+              - added|modified: '8vim/src/main/resources/schema.json'
+
   validate_layouts:
+    needs: changes
+    if: ${{ needs.changes.outputs.yaml == 'true' }}
     name: Validate language layouts
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            yaml:
-              - added|modified: '8vim/src/main/res/raw/*.ya?ml'
-              - added|modified: '8vim/src/main/resources/schema.json'
-      - if: steps.changes.outputs.yaml == 'true'
-        uses: 8VIM/json-yaml-validate@main
+      -  uses: 8VIM/json-yaml-validate@main
         with:
           json_schema: ./8vim/src/main/resources/schema.json
           yaml_as_json: "true"
           base_dir: ./8vim/src/main/res/raw
   test:
     name: 8VIM tests
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
