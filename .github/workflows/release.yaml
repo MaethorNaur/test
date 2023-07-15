@@ -46,6 +46,7 @@ jobs:
           base64 -d keystore-b64.txt > 8vim/test.jks
       - name: Build APK
         env:
+          VIM8_BUILD_KEYSTORE_FILE: ./8vim.jks
           VIM8_BUILD_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           VIM8_BUILD_KEY_ALIAS: ${{ secrets.ALIAS }}
           VIM8_BUILD_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
