@@ -62,18 +62,17 @@ jobs:
 
           echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH + $RC))" >> $GITHUB_ENV
           echo "version_name=$MAJOR.$MINOR.$PATCH" >> $GITHUB_ENV
-          echo $GITHUB_ENV
       - run: |
           echo "${{ github.event.inputs.whatsnew }}" > metadata/en-US/changelogs/${{env.version_code}}.txt
-      # - name: Commit files
-      #   run: |
-      #     git config --local user.email "github-actions[bot]@users.noreply.github.com"
-      #     git config --local user.name "github-actions[bot]"
-      #     git add metadata/en-US/changelogs/${{env.version_code}}.txt
-      #     git commit -a -m "chore(bump): release ${{env.version_name}}"
-      #     git tag ${{env.version_name}}
-      # - name: Push changes
-      #   uses: ad-m/github-push-action@master
-      #   with:
-      #     github_token: ${{ secrets.PAT }}
-      #     tags: true
+      - name: Commit files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add metadata/en-US/changelogs/${{env.version_code}}.txt
+          git commit -a -m "chore(bump): release ${{env.version_name}}"
+          git tag ${{env.version_name}}
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PAT }}
+          tags: true
