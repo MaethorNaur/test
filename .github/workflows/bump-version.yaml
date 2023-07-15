@@ -54,8 +54,14 @@ jobs:
               MAJOR=$(($MAJOR+1))
             fi
           fi
-          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH+ $RC))" >> $GITHUB_OUTPUT
-          echo "version_name=${{needs.version.outputs.major}}.${{needs.version.outputs.minor}}.${{needs.version.outputs.patch}}" >> $GITHUB_ENV
+
+          echo "MAJOR=$MAJOR" > 8vim/version.properties
+          echo "MINOR=$MINOR" >> 8vim/version.properties
+          echo "PATCH=$PATCH" >> 8vim/version.properties
+          echo "RC=$RC" >> 8vim/version.properties
+
+          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH + $RC))" >> $GITHUB_ENV
+          echo "version_name=$MAJOR.$MINOR.$PATCH" >> $GITHUB_ENV
           echo $GITHUB_ENV
       - run: |
           echo "${{ github.event.inputs.whatsnew }}" > metadata/en-US/changelogs/${{env.version_code}}.txt
