@@ -1,6 +1,6 @@
 name: Bump RC version
 
-concurrency: release_canditate
+concurrency: release_candidate
 
 on:
   pull_request_target:

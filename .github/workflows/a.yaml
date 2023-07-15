@@ -1,0 +1,13 @@
+name: a
+on: workflow_call
+
+jobs:
+  j:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo 1 > ./file
+      - uses: actions/upload-artifact@v3
+        with:
+          name: shared
+          path: file
