@@ -89,7 +89,8 @@ jobs:
           repository: MaethorNaur/MaethorNaur.github.io
   release:
     name: Create github release
-    needs: [playstore]
+    needs: [playstore, f_droid]
+    if: ${{ !cancelled() && needs.f_droid.result != 'failure' }}
     permissions:
       actions: read
       issues: read
