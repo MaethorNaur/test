@@ -6,9 +6,14 @@ on:
         required: true
         description: Store release message
       version:
-        description: |
-          Release version.
-          If not specifid it will bump the previous version_name
+        required: true
+        default: minor
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+        description: Release version.
 jobs:
   version:
     name: Get version
@@ -30,25 +35,38 @@ jobs:
       - name: bump version
         id: vars
         env:
-          PROVIDED_VERSION: ${{ github.event.inputs.version }}
+          MAJOR: ${{needs.version.outputs.major}}
+          MINOR: ${{needs.version.outputs.minor}}
+          PATCH: ${{needs.version.outputs.patch}}
+          VERSION: ${{ github.event.inputs.version }}
         run: |
-          VERSION_CODE=$((${{needs.version.outputs.version_code}}+1))
-          VERSION_NAME=${PROVIDED_VERSION:-v${{needs.version.outputs.version_code}}.0.0}
-          echo "VERSION_CODE=$VERSION_CODE" > 8vim/version.properties
-          echo "VERSION_NAME=$VERSION_NAME" >> 8vim/version.properties
-          echo "version_code=$VERSION_CODE" >> $GITHUB_ENV
-          echo "version_name=$VERSION_NAME" >> $GITHUB_ENV
+          if [ $VERSION = "patch" ]
+          then
+            PATCH=$(($PATCH+1))
+          else
+            PATCH=0
+            if [ $VERSION = "minor" ]
+            then
+              MINOR=$(($MINOR+1))
+            else
+              MINOR=0
+              MAJOR=$(($MAJOR+1))
+            fi
+          fi
+          echo "version_code=$((100000 * $RC + 10000 * ${{needs.version.outputs.major}} + 100 * ${{needs.version.outputs.minor}} + ${{needs.version.outputs.patch}}))" >> $GITHUB_ENV
+          echo "version_name=${{needs.version.outputs.major}}.${{needs.version.outputs.minor}}.${{needs.version.outputs.patch}}" >> $GITHUB_ENV
+          echo $GITHUB_ENV
       - run: |
           echo "${{ github.event.inputs.whatsnew }}" > metadata/en-US/changelogs/${{env.version_code}}.txt
-      - name: Commit files
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add metadata/en-US/changelogs/${{env.version_code}}.txt
-          git commit -a -m "chore(bump): release ${{env.version_name}}"
-          git tag ${{env.version_name}}
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.PAT }}
-          tags: true
+      # - name: Commit files
+      #   run: |
+      #     git config --local user.email "github-actions[bot]@users.noreply.github.com"
+      #     git config --local user.name "github-actions[bot]"
+      #     git add metadata/en-US/changelogs/${{env.version_code}}.txt
+      #     git commit -a -m "chore(bump): release ${{env.version_name}}"
+      #     git tag ${{env.version_name}}
+      # - name: Push changes
+      #   uses: ad-m/github-push-action@master
+      #   with:
+      #     github_token: ${{ secrets.PAT }}
+      #     tags: true
