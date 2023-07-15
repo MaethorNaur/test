@@ -90,7 +90,7 @@ jobs:
           repository: MaethorNaur/MaethorNaur.github.io
   release:
     name: Create github release
-    needs: [playstore, f_droid]
+    needs: [playstore, f_droid, version]
     if: ${{ !cancelled() && needs.f_droid.result != 'failure' }}
     permissions:
       actions: read
@@ -117,7 +117,7 @@ jobs:
         with:
           body: ${{steps.github_release.outputs.changelog}}
           files: ${{ steps.aab.outputs.download-paths }}
-          prerelease: true
+          prerelease: ${{needs.version.outputs.rc > 0}}
   # unrelease:
   #   name: Unrelease if an error happened
   #   needs: [playstore, release]
