@@ -48,3 +48,8 @@ jobs:
       version_code: ${{needs.bump_version.outputs.version_code}}
       version_name: ${{needs.bump_version.outputs.version_name}}
     secrets: inherit
+    permissions:
+      actions: read
+      issues: read
+      pull-requests: read
+      contents: write
