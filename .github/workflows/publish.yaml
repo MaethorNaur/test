@@ -10,8 +10,8 @@ on:
         required: true
         type: string
 env:
-  is_release: ${{contains(inputs.version_name,'rc')}}
-  target: ${{contains(inputs.version_name,'rc') && 'release' || 'rc'}}
+  is_release: ${{!contains(inputs.version_name, 'rc')}}
+  target: ${{contains(inputs.version_name, 'rc') && 'rc' || 'release'}}
 jobs:
   build_rc:
     if: ${{contains(inputs.version_name, 'rc')}}
