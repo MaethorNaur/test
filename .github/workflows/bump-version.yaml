@@ -18,6 +18,10 @@ jobs:
       version_code: ${{steps.vars.outputs.version_code}}
       version_name: ${{steps.vars.outputs.version_name}}
     steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
       - name: bump version
         id: vars
         env:
@@ -25,11 +29,14 @@ jobs:
           MINOR: ${{needs.version.outputs.minor}}
           PATCH: ${{needs.version.outputs.patch}}
           RC: ${{needs.version.outputs.RC}}
-          VERSION: ${{ github.event.inputs.version }}
+          VERSION: ${{ inputs.version }}
         run: |
+          [ -z "${{inputs.message}}" ] && echo "Empty" || echo "Not empty" 
+          exit 1
           if [ $VERSION = "rc" ]
           then
             RC=$(($RC+1))
+            echo "version_name=$MAJOR.$MINOR.$PATCH-rc.$RC" >> $GITHUB_OUTPUT
           else
             RC=0
             if [ $VERSION = "patch" ]
@@ -41,10 +48,14 @@ jobs:
               then
                 MINOR=$(($MINOR+1))
               else
-                MINOR=0
-                MAJOR=$(($MAJOR+1))
+                if [ $VERSION = "major" ]
+                then
+                  MINOR=0
+                  MAJOR=$(($MAJOR+1))
+                fi
               fi
             fi
+            echo "version_name=$MAJOR.$MINOR.$PATCH" >> $GITHUB_OUTPUT
           fi
 
           echo "MAJOR=$MAJOR" > 8vim/version.properties
@@ -53,10 +64,17 @@ jobs:
           echo "RC=$RC" >> 8vim/version.properties
 
           echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH - $RC))" >> $GITHUB_OUTPUT
-          if [ $VERSION = "rc" ]
-          then
-            echo "version_name=$MAJOR.$MINOR.$PATCH-rc.$RC" >> $GITHUB_OUTPUT
-          else
-            echo "version_name=$MAJOR.$MINOR.$PATCH" >> $GITHUB_OUTPUT
-          fi
-      - run: echo "${{ inputs.message }}"
+      - run: |
+          echo "${{ inputs.message }}" > metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
+      - name: Commit files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
+          git commit -a -m "chore(bump): release v${{steps.vars.outputs.version_name}}"
+          git tag v${{steps.vars.outputs.version_name}}
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PAT }}
+          tags: true
