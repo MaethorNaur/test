@@ -51,10 +51,10 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: tech.maethornaur.myapplication
-          releaseFiles: ${{ steps.artifact.outputs.download-paths }}/bundle/release/8vim-release.aab
+          releaseFiles: ${{ steps.artifact.outputs.download-path }}/bundle/release/8vim-release.aab
           track: ${{env.is_release && 'alpha' || 'internal'}}
           whatsNewDirectory: distribution/whatsnew
-          mappingFile: ${{ steps.artifact.outputs.download-paths }}/mapping/release/mapping.txt
+          mappingFile: ${{ steps.artifact.outputs.download-path }}/mapping/release/mapping.txt
   f_droid:
     name: Release to F-droid
     if: ${{!contains(inputs.version_name, 'rc')}}
@@ -109,5 +109,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body: ${{steps.github_release.outputs.changelog}}
-          files: ${{ steps.artifact.outputs.download-paths }}/apk/${{env.target}}/8vim-${{env.target}}.apk
+          files: ${{ steps.artifact.outputs.download-path }}/apk/${{env.target}}/8vim-${{env.target}}.apk
           prerelease: ${{!env.is_release}}
