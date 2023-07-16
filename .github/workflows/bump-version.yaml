@@ -31,7 +31,7 @@ jobs:
           RC: ${{needs.version.outputs.RC}}
           VERSION: ${{ inputs.version }}
         run: |
-          [ -z "${{inputs.message}}" ] && echo "Empty" || echo "Not empty" 
+          [ -n "${{inputs.message}}" ] && echo "y"
           exit 1
           if [ $VERSION = "rc" ]
           then
@@ -64,15 +64,20 @@ jobs:
           echo "RC=$RC" >> 8vim/version.properties
 
           echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH - $RC))" >> $GITHUB_OUTPUT
-      - run: |
-          echo "${{ inputs.message }}" > metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
       - name: Commit files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
+
+          if [ -n "${{inputs.message}}" ]
+          then
+            echo "${{ inputs.message }}" > metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
+            git add metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
+          fi
+
           git commit -a -m "chore(bump): release v${{steps.vars.outputs.version_name}}"
-          git tag v${{steps.vars.outputs.version_name}}
+
+          [ -n "${{inputs.message}}" ] && git tag v${{steps.vars.outputs.version_name}}
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
