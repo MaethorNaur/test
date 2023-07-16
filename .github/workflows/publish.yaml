@@ -9,8 +9,8 @@ jobs:
   version:
     name: Get app version
     uses: ./.github/workflows/extract-version.yaml
-  playstore:
-    name: Deploy the app to Google playstore
+  build:
+    name: Build app
     needs: version
     runs-on: ubuntu-latest
     env:
@@ -25,8 +25,6 @@ jobs:
           cache: gradle
       - name: Setup env
         run: |
-          mkdir -p distribution/whatsnew
-          cp metadata/en-US/changelogs/${{needs.version.outputs.version_code}}.txt distribution/whatsnew/whatsnew-en-US
           echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" > keystore-b64.txt
           base64 -d keystore-b64.txt > 8vim/8vim.jks
       - name: Build APK
@@ -36,22 +34,42 @@ jobs:
           VIM8_BUILD_KEY_ALIAS: ${{ secrets.ALIAS }}
           VIM8_BUILD_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew ${{env.cmd}}
+      - name: Upload artifact aab
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifact
+          path: |
+            8vim/build/outputs/*/${{env.target}}/8vim-${{env.target}}.*
+            8vim/build/outputs/mapping/${{env.target}}/mapping.txt
+  playstore:
+    name: Deploy the app to Google playstore
+    needs: [build, version]
+    runs-on: ubuntu-latest
+    env:
+      target: ${{needs.version.outputs.rc > 0 && 'rc' || 'release'}}
+      cmd: ${{needs.version.outputs.rc > 0 && 'bundleRc assembleRc' || 'bundleRelease assembleRelease'}}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download artifact
+        id: artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: artifact
+          path: artifact/
+      - name: Setup env
+        run: |
+          mkdir -p distribution/whatsnew
+          cp metadata/en-US/changelogs/${{needs.version.outputs.version_code}}.txt distribution/whatsnew/whatsnew-en-US
       - name: Google play release
         uses: r0adkll/upload-google-play@v1
         if: ${{needs.version.outputs.rc == 0}}
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: tech.maethornaur.myapplication
-          releaseFiles: 8vim/build/outputs/bundle/${{env.target}}/8vim-${{env.target}}.aab
+          releaseFiles: ${{ steps.artifact.outputs.download-paths }}/8vim-${{env.target}}.aab
           track: alpha
           whatsNewDirectory: distribution/whatsnew
-          mappingFile: 8vim/build/outputs/mapping/${{env.target}}/mapping.txt
-      - name: Upload artifact aab
-        uses: actions/upload-artifact@v3
-        with:
-          name: aab
-          path: |
-            8vim/build/outputs/*/${{env.target}}/8vim-${{env.target}}.*
+          mappingFile: ${{ steps.artifact.outputs.download-paths }}/mapping.txt
   f_droid:
     name: Release to F-droid
     needs: version
@@ -76,7 +94,7 @@ jobs:
           repository: MaethorNaur/MaethorNaur.github.io
   release:
     name: Create github release
-    needs: [playstore, f_droid, version]
+    needs: [build, playstore, f_droid, version]
     if: ${{ !cancelled() && needs.playstore.result == 'success' && needs.f_droid.result != 'failure' }}
     permissions:
       actions: read
@@ -87,11 +105,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Download artifact
-        id: aab
+        id: artifact
         uses: actions/download-artifact@v3
         with:
-          name: aab
-          path: aab/
+          name: artifact
+          path: artifact/
       - name: Create Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v4
@@ -104,5 +122,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body: ${{steps.github_release.outputs.changelog}}
-          files: ${{ steps.aab.outputs.download-paths }}/*
+          files: ${{ steps.artifact.outputs.download-paths }}/8vim-*
           prerelease: ${{needs.version.outputs.rc > 0}}
