@@ -62,12 +62,11 @@ jobs:
           cp metadata/en-US/changelogs/${{needs.version.outputs.version_code}}.txt distribution/whatsnew/whatsnew-en-US
       - name: Google play release
         uses: r0adkll/upload-google-play@v1
-        if: ${{needs.version.outputs.rc == 0}}
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: tech.maethornaur.myapplication
           releaseFiles: ${{ steps.artifact.outputs.download-paths }}/8vim-${{env.target}}.aab
-          track: alpha
+          track: ${{needs.version.outputs.rc > 0 && 'alpha' || 'internal'}}
           whatsNewDirectory: distribution/whatsnew
           mappingFile: ${{ steps.artifact.outputs.download-paths }}/mapping.txt
   f_droid:
