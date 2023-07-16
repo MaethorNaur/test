@@ -51,10 +51,10 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: tech.maethornaur.myapplication
-          releaseFiles: ${{ steps.artifact.outputs.download-paths }}/8vim-release.aab
-          track: alpha
+          releaseFiles: ${{ steps.artifact.outputs.download-paths }}/bundle/release/8vim-release.aab
+          track: ${{env.is_release && 'alpha' || 'internal'}}
           whatsNewDirectory: distribution/whatsnew
-          mappingFile: ${{ steps.artifact.outputs.download-paths }}/mapping.txt
+          mappingFile: ${{ steps.artifact.outputs.download-paths }}/mapping/release/mapping.txt
   f_droid:
     name: Release to F-droid
     if: ${{!contains(inputs.version_name, 'rc')}}
