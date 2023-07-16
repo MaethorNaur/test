@@ -73,7 +73,9 @@ jobs:
             git add metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
           fi
 
-          git commit -a -m "chore(bump): release v${{steps.vars.outputs.version_name}}" || echo "no changes"
+          set +e
+          git commit -a -m "chore(bump): release v${{steps.vars.outputs.version_name}}"
+          set -e
 
           [ -n "${{inputs.message}}" ] && git tag v${{steps.vars.outputs.version_name}}
       - name: Push changes
