@@ -66,7 +66,7 @@ jobs:
           echo "MAJOR=$MAJOR" > 8vim/version.properties
           echo "MINOR=$MINOR" >> 8vim/version.properties
           echo "PATCH=$PATCH" >> 8vim/version.properties
-          echo "RC=$RC" >> 8vim/version.properties
+          echo -n "RC=$RC" >> 8vim/version.properties
 
           echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH - $RC))" >> $GITHUB_OUTPUT
       - name: Commit files
@@ -76,7 +76,7 @@ jobs:
 
           if [ -n "${{inputs.message}}" ]
           then
-            echo "${{ inputs.message }}" > metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
+            echo -n "${{ inputs.message }}" > metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
             git add metadata/en-US/changelogs/${{steps.vars.outputs.version_code}}.txt
           fi
 
