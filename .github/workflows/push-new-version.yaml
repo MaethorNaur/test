@@ -1,0 +1,128 @@
+name: Push new version
+on:
+  workflow_call:
+    inputs:
+      message:
+        type: string
+      version_code:
+        required: true
+        type: string
+jobs:
+  version:
+    name: Get version
+    uses: ./.github/workflows/extract-version.yaml
+  bump_version:
+    needs: version
+    runs-on: ubuntu-latest
+    outputs:
+      version_code: ${{steps.vars.outputs.version_code}}
+      version_name: ${{steps.vars.outputs.version_name}}
+    steps:
+      - name: bump version
+        id: vars
+        env:
+          MAJOR: ${{needs.version.outputs.major}}
+          MINOR: ${{needs.version.outputs.minor}}
+          PATCH: ${{needs.version.outputs.patch}}
+          RC: ${{needs.version.outputs.RC}}
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          if [ $VERSION = "rc" ]
+          then
+            RC=$(($RC+1))
+          else
+            RC=0
+            if [ $VERSION = "patch" ]
+            then
+              PATCH=$(($PATCH+1))
+            else
+              PATCH=0
+              if [ $VERSION = "minor" ]
+              then
+                MINOR=$(($MINOR+1))
+              else
+                MINOR=0
+                MAJOR=$(($MAJOR+1))
+              fi
+            fi
+          fi
+
+          echo "MAJOR=$MAJOR" > 8vim/version.properties
+          echo "MINOR=$MINOR" >> 8vim/version.properties
+          echo "PATCH=$PATCH" >> 8vim/version.properties
+          echo "RC=$RC" >> 8vim/version.properties
+
+          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH - $RC))" >> $GITHUB_OUTPUT
+          if [ $VERSION = "rc" ]
+          then
+            echo "version_name=$MAJOR.$MINOR.$PATCH-rc.$RC" >> $GITHUB_OUTPUT
+          else
+            echo "version_name=$MAJOR.$MINOR.$PATCH" >> $GITHUB_OUTPUT
+          fi
+  bump_rc:
+    needs: version
+    permissions:
+      actions: read
+      issues: read
+      pull-requests: read
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: bump version
+        env:
+          MAJOR: ${{needs.version.outputs.major}}
+          MINOR: ${{needs.version.outputs.minor}}
+          PATCH: ${{needs.version.outputs.patch}}
+          RC: ${{needs.version.outputs.RC}}
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          if [ $VERSION = "rc" ]
+          then
+            RC=$(($RC+1))
+          else
+            RC=0
+            if [ $VERSION = "patch" ]
+            then
+              PATCH=$(($PATCH+1))
+            else
+              PATCH=0
+              if [ $VERSION = "minor" ]
+              then
+                MINOR=$(($MINOR+1))
+              else
+                MINOR=0
+                MAJOR=$(($MAJOR+1))
+              fi
+            fi
+          fi
+
+          echo "MAJOR=$MAJOR" > 8vim/version.properties
+          echo "MINOR=$MINOR" >> 8vim/version.properties
+          echo "PATCH=$PATCH" >> 8vim/version.properties
+          echo "RC=$RC" >> 8vim/version.properties
+
+          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH - $RC))" >> $GITHUB_ENV
+          if [ $VERSION = "rc" ]
+          then
+            echo "version_name=$MAJOR.$MINOR.$PATCH-rc.$RC" >> $GITHUB_ENV
+          else
+            echo "version_name=$MAJOR.$MINOR.$PATCH" >> $GITHUB_ENV
+          fi
+      - run: |
+          echo "${{ inputs.message }}" > metadata/en-US/changelogs/${{env.version_code}}.txt
+      - name: Commit files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add metadata/en-US/changelogs/${{env.version_code}}.txt
+          git commit -a -m "chore(bump): release v${{env.version_name}}"
+          git tag v${{env.version_name}}
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PAT }}
+          tags: true
