@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import tech.maethornaur.myapplication.databinding.FragmentSecondBinding
-
  
 class SecondFragment : Fragment() {
 
