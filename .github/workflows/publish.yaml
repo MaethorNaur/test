@@ -42,12 +42,10 @@ jobs:
             8vim/build/outputs/*/${{env.target}}/8vim-${{env.target}}.*
             8vim/build/outputs/mapping/${{env.target}}/mapping.txt
   playstore:
+    if: ${{needs.version.outputs.rc == 0}}
     name: Deploy the app to Google playstore
     needs: [build, version]
     runs-on: ubuntu-latest
-    env:
-      target: ${{needs.version.outputs.rc > 0 && 'rc' || 'release'}}
-      cmd: ${{needs.version.outputs.rc > 0 && 'bundleRc assembleRc' || 'bundleRelease assembleRelease'}}
     steps:
       - uses: actions/checkout@v3
       - name: Download artifact
@@ -65,8 +63,8 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: tech.maethornaur.myapplication
-          releaseFiles: ${{ steps.artifact.outputs.download-paths }}/8vim-${{env.target}}.aab
-          track: ${{needs.version.outputs.rc > 0 && 'alpha' || 'internal'}}
+          releaseFiles: ${{ steps.artifact.outputs.download-paths }}/8vim-release.aab
+          track: alpha
           whatsNewDirectory: distribution/whatsnew
           mappingFile: ${{ steps.artifact.outputs.download-paths }}/mapping.txt
   f_droid:
@@ -94,7 +92,7 @@ jobs:
   release:
     name: Create github release
     needs: [build, playstore, f_droid, version]
-    if: ${{ !cancelled() && needs.playstore.result == 'success' && needs.f_droid.result != 'failure' }}
+    if: ${{ !cancelled() && needs.playstore.result != 'failure' && needs.f_droid.result != 'failure' }}
     permissions:
       actions: read
       issues: read
