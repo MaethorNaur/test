@@ -111,3 +111,4 @@ jobs:
           body: ${{steps.github_release.outputs.changelog}}
           files: ${{ steps.artifact.outputs.download-path }}/apk/${{env.target}}/8vim-${{env.target}}.apk
           prerelease: ${{!env.is_release}}
+          tag_name: v${{inputs.version_name}}
