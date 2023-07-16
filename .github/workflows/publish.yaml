@@ -12,7 +12,8 @@ on:
       version_name:
         required: true
         type: string
-
+env:
+  target: ${{inputs.is_release && 'release' || 'rc'}}
 jobs:
   build_rc:
     name: Build release candidate app
@@ -44,7 +45,6 @@ jobs:
           path: |
             8vim/build/outputs/*/rc/8vim-rc.*
             8vim/build/outputs/mapping/rc/mapping.txt
-
   build:
     if: ${{inputs.is_release}}
     name: Build app
@@ -88,7 +88,8 @@ jobs:
           name: artifact
           path: artifact/
       - run: |
-          ls -alh ${{steps.artifact.outputs.download-paths}}/
+          ls -Ralh ${{steps.artifact.outputs.download-paths}}
+
   # playstore:
   #   name: Deploy the app to Google playstore
   #   needs: build
@@ -169,5 +170,5 @@ jobs:
   #       uses: softprops/action-gh-release@v1
   #       with:
   #         body: ${{steps.github_release.outputs.changelog}}
-  #         files: ${{ steps.artifact.outputs.download-paths }}/*.apk
-  #         prerelease: ${{inputs.is_release}}
+  #         files: ${{ steps.artifact.outputs.download-paths }}/apk/${{env.target}}/8vim-${{env.target}}.apk
+  #         prerelease: ${{!inputs.is_release}}
