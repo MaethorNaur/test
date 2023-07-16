@@ -14,7 +14,7 @@ env:
   target: ${{contains(inputs.version_name,'rc') && 'release' || 'rc'}}
 jobs:
   build_rc:
-    if: ${{!contains(inputs.version_name,'rc')}}
+    if: ${{contains(inputs.version_name, 'rc')}}
     name: Build release candidate app
     uses: ./.github/workflows/build.yaml
     with:
@@ -57,7 +57,7 @@ jobs:
           mappingFile: ${{ steps.artifact.outputs.download-paths }}/mapping.txt
   f_droid:
     name: Release to F-droid
-    if: ${{contains(inputs.version_name,'rc')}}
+    if: ${{!contains(inputs.version_name, 'rc')}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
