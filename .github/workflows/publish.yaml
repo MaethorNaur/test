@@ -3,9 +3,6 @@ name: Publish 8VIM
 on:
   workflow_call:
     inputs:
-      is_release:
-        default: false
-        type: boolean
       version_code:
         required: true
         type: string
@@ -13,21 +10,24 @@ on:
         required: true
         type: string
 env:
-  target: ${{inputs.is_release && 'release' || 'rc'}}
+  is_release: ${{contains(inputs.version_name,'rc')}}
+  target: ${{contains(inputs.version_name,'rc') && 'release' || 'rc'}}
 jobs:
   build_rc:
-    if: ${{!inputs.is_release}}
+    if: ${{!contains(inputs.version_name,'rc')}}
     name: Build release candidate app
     uses: ./.github/workflows/build.yaml
     with:
       ref: v${{inputs.version_name}}
       target: rc
+    secrets: inherit
   build:
     name: Build app
     uses: ./.github/workflows/build.yaml
     with:
       ref: v${{inputs.version_name}}
       target: release
+    secrets: inherit
   playstore:
     name: Deploy the app to Google playstore
     needs: build
@@ -57,7 +57,7 @@ jobs:
           mappingFile: ${{ steps.artifact.outputs.download-paths }}/mapping.txt
   f_droid:
     name: Release to F-droid
-    if: ${{inputs.is_release}}
+    if: ${{contains(inputs.version_name,'rc')}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -101,7 +101,7 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v4
         with:
           configuration: changelog-configuration.json
-          ignorePreReleases: "${{inputs.is_release}}"
+          ignorePreReleases: "${{env.is_release}}"
           toTag: v${{inputs.version_name}}
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
@@ -110,4 +110,4 @@ jobs:
         with:
           body: ${{steps.github_release.outputs.changelog}}
           files: ${{ steps.artifact.outputs.download-paths }}/apk/${{env.target}}/8vim-${{env.target}}.apk
-          prerelease: ${{!inputs.is_release}}
+          prerelease: ${{!env.is_release}}

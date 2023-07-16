@@ -37,7 +37,6 @@ jobs:
     name: Release
     uses: ./.github/workflows/publish.yaml
     with:
-      is_release: true
       version_code: ${{needs.update_version.outputs.version_code}}
       version_name: ${{needs.update_version.outputs.version_name}}
     secrets: inherit
