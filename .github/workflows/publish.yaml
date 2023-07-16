@@ -119,5 +119,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body: ${{steps.github_release.outputs.changelog}}
-          files: ${{ steps.artifact.outputs.download-paths }}/8vim-*
+          files: ${{ steps.artifact.outputs.download-paths }}/*.apk
           prerelease: ${{needs.version.outputs.rc > 0}}
