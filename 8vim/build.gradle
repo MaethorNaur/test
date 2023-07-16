@@ -30,6 +30,12 @@ android {
         versionCode versionMajor * 1000000 + 10000 * versionMinor + 100 * versionPatch - versionRc
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         resValue "string", "app_name_with_flavour", "My Application"
+        
+        if(versionRc > 0) {
+            versionNameSuffix "-rc.${versionRc}"
+            resValue "string", "app_name_with_flavour", "My Application RC"
+        }
+        
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -56,9 +62,6 @@ android {
             create("rc") {
                 initWith release
                 applicationIdSuffix ".rc"
-                versionNameSuffix "-rc.${versionRc}"
-                resValue "string", "version_name", android.defaultConfig.versionName + versionNameSuffix
-                resValue "string", "app_name_with_flavour", "My Application RC"
             }
         }
     }
