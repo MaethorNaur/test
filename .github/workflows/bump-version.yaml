@@ -78,6 +78,7 @@ jobs:
           set -e
 
           if [ -n "${{inputs.message}}" ]
+          then
             git tag v${{steps.vars.outputs.version_name}}
           fi
       - name: Push changes
