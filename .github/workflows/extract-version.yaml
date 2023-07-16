@@ -37,5 +37,5 @@ jobs:
           echo "minor=$MINOR" >> $GITHUB_OUTPUT
           echo "patch=$PATCH" >> $GITHUB_OUTPUT
           echo "rc=$RC" >> $GITHUB_OUTPUT
-          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH + $RC))" >> $GITHUB_OUTPUT
+          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH - $RC))" >> $GITHUB_OUTPUT
           echo "version_name=$MAJOR.$MINOR.$PATCH" >> $GITHUB_OUTPUT

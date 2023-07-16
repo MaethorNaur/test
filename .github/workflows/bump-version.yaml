@@ -60,7 +60,7 @@ jobs:
           echo "PATCH=$PATCH" >> 8vim/version.properties
           echo "RC=$RC" >> 8vim/version.properties
 
-          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH + $RC))" >> $GITHUB_ENV
+          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH - $RC))" >> $GITHUB_ENV
           echo "version_name=$MAJOR.$MINOR.$PATCH" >> $GITHUB_ENV
       - run: |
           echo "${{ github.event.inputs.whatsnew }}" > metadata/en-US/changelogs/${{env.version_code}}.txt

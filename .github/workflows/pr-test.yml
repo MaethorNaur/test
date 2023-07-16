@@ -54,7 +54,7 @@ jobs:
           java-version: "17"
           distribution: temurin
           cache: gradle
-      - run: ./gradlew testRcDebugUnitTest
+      - run: ./gradlew check
   upload_artifact:
     if: ${{ !cancelled() && (needs.test.result == 'success' || needs.validate_layouts.result == 'success') }}
     needs: [validate_layouts, test]
@@ -68,11 +68,11 @@ jobs:
           cache: gradle
       - run: |
           echo ${{ github.event.number }} > ./pr_number
-          ./gradlew assembleRcDebug
+          ./gradlew assembleDebug
       - uses: actions/upload-artifact@v3
         with:
           name: apk
           path: |
             pr_number
-            8vim/build/outputs/apk/rc/debug/8vim-rc-debug.apk
+            8vim/build/outputs/apk/debug/8vim-debug.apk
           retention-days: 7
