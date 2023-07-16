@@ -1,6 +1,6 @@
 name: Merged pull request
 
-concurrency: release_candidate
+concurrency: release
 
 on:
   pull_request_target:
