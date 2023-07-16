@@ -2,7 +2,7 @@ name: Release candidate
 
 on:
   push:
-    tags: ["*"]
+    tags: ["s*"]
 jobs:
   version:
     name: Get app version
