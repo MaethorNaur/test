@@ -88,7 +88,9 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add version.json
+          set +e
           git commit -a -m "chore: release ${{inputs.version_name}}"
+          set -e
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
