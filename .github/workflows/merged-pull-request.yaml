@@ -30,45 +30,12 @@ jobs:
               - "**.gradle"
               - 8vim/src/main/res/raw/*.ya?ml
               - modified: '8vim/src/main/resources/schema.json'
-  version:
-    name: Get version
-    uses: ./.github/workflows/extract-version.yaml
-  bump_rc:
-    needs: [changes, version]
+  bump_version:
+    needs: changes
     if: ${{ needs.changes.outputs.src == 'true' }}
-    permissions:
-      actions: read
-      issues: read
-      pull-requests: read
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-      - name: bump version
-        run: |
-          RC=$((${{needs.version.outputs.rc}}+1))
-
-          echo "MAJOR=${{needs.version.outputs.major}}" > 8vim/version.properties
-          echo "MINOR=${{needs.version.outputs.minor}}" >> 8vim/version.properties
-          echo "PATCH=${{needs.version.outputs.patch}}" >> 8vim/version.properties
-          echo "RC=$RC" >> 8vim/version.properties
-
-          echo "version_code=$(( 1000000 * ${{needs.version.outputs.major}} + 10000 * ${{needs.version.outputs.minor}} + 100 * ${{needs.version.outputs.patch}} - $RC))" >> $GITHUB_ENV
-          echo "version_name=${{needs.version.outputs.major}}.${{needs.version.outputs.minor}}.${{needs.version.outputs.patch}}-rc.${RC}" >> $GITHUB_ENV
-      - run: |
-          echo "${{ github.event.pull_request.title }}" > metadata/en-US/changelogs/${{env.version_code}}.txt
-      - name: Commit files
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add metadata/en-US/changelogs/${{env.version_code}}.txt
-          git commit -a -m "chore(bump): release v${{env.version_name}}"
-          git tag v${{env.version_name}}
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.PAT }}
-          tags: true
+    name: Get version
+    uses: ./.github/workflows/bump-version.yaml
+    with:
+      message: ${{github.event.pull_request.title}}
+      version: rc
+    secrets: inherit

@@ -31,8 +31,6 @@ jobs:
           RC: ${{needs.version.outputs.RC}}
           VERSION: ${{ inputs.version }}
         run: |
-          [ -n "${{inputs.message}}" ] && echo "y"
-          exit 1
           if [ $VERSION = "rc" ]
           then
             RC=$(($RC+1))
