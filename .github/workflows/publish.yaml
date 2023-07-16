@@ -1,23 +1,29 @@
 name: Publish 8VIM
 
-concurrency: release
-
 on:
-  push:
-    tags: ["v*"]
+  workflow_call:
+    inputs:
+      is_release:
+        default: false
+        type: boolean
+      version_code:
+        required: true
+        type: string
+      version_name:
+        required: true
+        type: string
+
 jobs:
-  version:
-    name: Get app version
-    uses: ./.github/workflows/extract-version.yaml
   build:
     name: Build app
-    needs: version
     runs-on: ubuntu-latest
     env:
-      target: ${{needs.version.outputs.rc > 0 && 'rc' || 'release'}}
-      cmd: ${{needs.version.outputs.rc > 0 && 'bundleRc assembleRc' || 'bundleRelease assembleRelease'}}
+      target: ${{inputs.is_release && 'release' || 'rc'}}
+      cmd: ${{inputs.is_release && 'bundleRelease assembleRelease' || 'bundleRc assembleRc'}}
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: v${{inputs.version_name}}
       - uses: actions/setup-java@v3
         with:
           java-version: "17"
@@ -42,9 +48,9 @@ jobs:
             8vim/build/outputs/*/${{env.target}}/8vim-${{env.target}}.*
             8vim/build/outputs/mapping/${{env.target}}/mapping.txt
   playstore:
-    if: ${{needs.version.outputs.rc == 0}}
+    if: ${{inputs.is_release}}
     name: Deploy the app to Google playstore
-    needs: [build, version]
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -57,7 +63,7 @@ jobs:
       - name: Setup env
         run: |
           mkdir -p distribution/whatsnew
-          cp metadata/en-US/changelogs/${{needs.version.outputs.version_code}}.txt distribution/whatsnew/whatsnew-en-US
+          cp metadata/en-US/changelogs/${{inputs.version_code}}.txt distribution/whatsnew/whatsnew-en-US
       - name: Google play release
         uses: r0adkll/upload-google-play@v1
         with:
@@ -69,8 +75,7 @@ jobs:
           mappingFile: ${{ steps.artifact.outputs.download-paths }}/mapping.txt
   f_droid:
     name: Release to F-droid
-    needs: version
-    if: ${{needs.version.outputs.rc == 0}}
+    if: ${{inputs.is_release}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -79,11 +84,11 @@ jobs:
           repository: MaethorNaur/MaethorNaur.github.io
           persist-credentials: false
       - run: |
-          echo "{\"version_code\": ${{needs.version.outputs.version_code}}, \"version_name\": \"${{needs.version.outputs.version_name}}\"}" > version.json
+          echo "{\"version_code\": ${{inputs.version_code}}, \"version_name\": \"${{inputs.version_name}}\"}" > version.json
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add version.json
-          git commit -a -m "chore: release ${{needs.version.outputs.version_name}}"
+          git commit -a -m "chore: release ${{inputs.version_name}}"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
@@ -91,7 +96,7 @@ jobs:
           repository: MaethorNaur/MaethorNaur.github.io
   release:
     name: Create github release
-    needs: [build, playstore, f_droid, version]
+    needs: [build, playstore, f_droid]
     if: ${{ !cancelled() && needs.playstore.result != 'failure' && needs.f_droid.result != 'failure' }}
     permissions:
       actions: read
@@ -112,7 +117,7 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v4
         with:
           configuration: changelog-configuration.json
-          ignorePreReleases: "${{needs.version.outputs.rc == 0}}"
+          ignorePreReleases: "${{inputs.is_release}}"
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - name: Create release
@@ -120,4 +125,4 @@ jobs:
         with:
           body: ${{steps.github_release.outputs.changelog}}
           files: ${{ steps.artifact.outputs.download-paths }}/*.apk
-          prerelease: ${{needs.version.outputs.rc > 0}}
+          prerelease: ${{inputs.is_release}}

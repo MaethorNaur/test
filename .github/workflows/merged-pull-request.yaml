@@ -40,3 +40,11 @@ jobs:
       message: ${{github.event.pull_request.title}}
       version: rc
     secrets: inherit
+  release:
+    needs: bump_version
+    name: Release
+    uses: ./.github/workflows/publish.yaml
+    with:
+      version_code: ${{needs.bump_version.outputs.version_code}}
+      version_name: ${{needs.bump_version.outputs.version_name}}
+    secrets: inherit

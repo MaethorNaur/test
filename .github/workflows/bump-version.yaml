@@ -7,6 +7,11 @@ on:
       version:
         required: true
         type: string
+    outputs:
+      version_code:
+        value: ${{jobs.bump_version.outputs.version_code}}
+      version_name:
+        value: ${{jobs.bump_version.outputs.version_name}}
 jobs:
   version:
     name: Get version
