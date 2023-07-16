@@ -27,6 +27,7 @@ jobs:
               - 8vim/**/*.java
               - 8vim/**/*.kt
               - 8vim/**/*.xml
+              - 8vim/**/*.pro
               - "**.gradle"
               - 8vim/src/main/res/raw/*.ya?ml
               - modified: '8vim/src/main/resources/schema.json'
