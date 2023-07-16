@@ -16,7 +16,7 @@ on:
           - major
           - minor
           - patch
-        description: Release version.
+        description: Next version
 jobs:
   version:
     name: Get version
