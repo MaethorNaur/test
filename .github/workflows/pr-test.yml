@@ -27,7 +27,7 @@ jobs:
               - "**.gradle"
             yaml:
               - added|modified: '8vim/src/main/res/raw/*.ya?ml'
-              - added|modified: '8vim/src/main/resources/schema.json'
+              - modified: '8vim/src/main/resources/schema.json'
   validate_layouts:
     needs: changes
     if: ${{ needs.changes.outputs.yaml == 'true' }}
@@ -67,20 +67,12 @@ jobs:
           distribution: temurin
           cache: gradle
       - run: |
+          echo ${{ github.event.number }} > ./pr_number
           ./gradlew assembleRcDebug
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: apk
-          path: 8vim/build/outputs/apk/rc/debug/8vim-rc-debug.apk
-          retention-days: 7
-      - name: Save PR number
-        env:
-          PR_NUMBER: ${{ github.event.number }}
-        run: |
-          mkdir -p ./pr
-          echo $PR_NUMBER > ./pr/pr_number
       - uses: actions/upload-artifact@v3
         with:
-          name: pr_number
-          path: pr/
+          name: apk
+          path: |
+            pr_number
+            8vim/build/outputs/apk/rc/debug/8vim-rc-debug.apk
+          retention-days: 7
