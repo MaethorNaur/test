@@ -88,7 +88,7 @@ jobs:
           name: artifact
           path: artifact/
       - run: |
-          ls -alh ${{steps.artifact.outputs.download-paths}}
+          ls -alh ${{steps.artifact.outputs.download-paths}}/
   # playstore:
   #   name: Deploy the app to Google playstore
   #   needs: build
