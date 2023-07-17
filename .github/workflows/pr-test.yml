@@ -1,7 +1,7 @@
 name: PR test
 
 on:
-  pull_request:
+  pull_request_target:
     branches: [main]
     paths:
       - "**.gradle"
@@ -21,13 +21,14 @@ jobs:
         with:
           filters: |
             src:
-              - 8vim/**/*.java
-              - 8vim/**/*.kt
-              - 8vim/**/*.xml
-              - 8vim/**/*.pro
-              - "**.gradle"
+              - '8vim/**/*.java'
+              - '8vim/**/*.kt'
+              - '8vim/**/*.xml'
+              - '8vim/**/*.pro'
+              - '**.gradle'
             yaml:
-              - added|modified: '8vim/src/main/res/raw/*.ya?ml'
+              - added|modified: '8vim/src/main/res/raw/*.yaml'
+              - added|modified: '8vim/src/main/res/raw/*.yml'
               - modified: '8vim/src/main/resources/schema.json'
   validate_layouts:
     needs: changes
