@@ -12,7 +12,6 @@ class SecondFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
 
-
     private val binding get() = _binding!!
 
     override fun onCreateView(
