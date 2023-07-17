@@ -27,7 +27,7 @@ android {
         applicationId "tech.maethornaur.myapplication"
         minSdk 24
         targetSdk 33
-        versionCode versionMajor * 1000000 + 10000 * versionMinor + 100 * versionPatch - versionRc
+        versionCode versionMajor * 1000000 + 10000 * versionMinor + 100 * versionPatch - (versionRc>0?100 - versionRc:0)
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         resValue "string", "app_name_with_flavour", "My Application"
         

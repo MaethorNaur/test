@@ -38,10 +38,12 @@ jobs:
           RC: ${{needs.version.outputs.RC}}
           VERSION: ${{ inputs.version }}
         run: |
+          RC_CODE=0
           if [ $VERSION = "rc" ]
           then
             RC=$(($RC+1))
             echo "version_name=$MAJOR.$MINOR.$PATCH-rc.$RC" >> $GITHUB_OUTPUT
+            RC_CODE=$((100-$RC))
           else
             RC=0
             if [ $VERSION = "patch" ]
@@ -68,7 +70,7 @@ jobs:
           echo "PATCH=$PATCH" >> 8vim/version.properties
           echo -n "RC=$RC" >> 8vim/version.properties
 
-          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH - $RC))" >> $GITHUB_OUTPUT
+          echo "version_code=$(( 1000000 * $MAJOR + 10000 * $MINOR + 100 * $PATCH - $RC_CODE))" >> $GITHUB_OUTPUT
       - name: Commit files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
