@@ -1,6 +1,7 @@
 info:
-  name: fr
-  email: test@test.com
+  contact:
+    name: fr
+    email: test@test.com
 layers:
   default:
     sectors:
