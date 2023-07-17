@@ -2,7 +2,7 @@ name: Update PR comment
 
 on:
   workflow_run:
-    workflows: [PR test]
+    workflows: [PR test2]
     types: [completed]
 
 jobs:

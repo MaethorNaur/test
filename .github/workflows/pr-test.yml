@@ -68,10 +68,43 @@ jobs:
     if: ${{ !cancelled() && needs.build.result=='success' && (needs.test.result == 'success' || needs.validate_layouts.result == 'success') }}
     needs: [build, validate_layouts, test]
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      pull-requests: write
     steps:
-      - run: echo ${{ github.event.number }} > ./pr_number
-      - uses: actions/upload-artifact@v3
+      - name: Get artifact link
+        id: artifact
+        run: |
+          check_suite_id=$(curl \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ github.token }}" \
+          -s \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/artifacts" \
+          | jq -j '.check_suite_id')
+
+          curl \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ github.token }}" \
+          -s \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/artifacts" \
+          | jq -c '.artifacts[0]' > artifact.json
+
+          curl \
+          -L \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ github.token }}" \
+          -s \
+          -o artifact.zip \
+          $(jq -j '.archive_download_url' artifact.json)
+          unzip artifact.zip
+
+          echo "pr_number=$(cat pr_number)" >> $GITHUB_OUTPUT
+          echo "url=https://github.com/${{ github.repository }}/suites/${check_suite_id}/artifacts/$(jq -j '.id' artifact.json)" >> $GITHUB_OUTPUT
+          echo "expires=$(jq -j '.expires_at' artifact.json)" >> $GITHUB_OUTPUT
+      - name: Update comment
+        uses: thollander/actions-comment-pull-request@v2
         with:
-          name: artifact
-          path: pr_number
-          retention-days: 7
+          message: |
+            Artifact [8vim-debug](${{steps.artifact.outputs.url}}) available until: ${{steps.artifact.outputs.expires}}
+          comment_tag: artifact
+          pr_number: ${{github.event.number}}
