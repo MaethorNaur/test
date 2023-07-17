@@ -9,9 +9,6 @@ on:
       version_name:
         required: true
         type: string
-env:
-  is_release: ${{!contains(inputs.version_name, 'rc')}}
-  target: ${{contains(inputs.version_name, 'rc') && 'rc' || 'release'}}
 jobs:
   build_rc:
     if: ${{contains(inputs.version_name, 'rc')}}
@@ -52,7 +49,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: tech.maethornaur.myapplication
           releaseFiles: ${{ steps.artifact.outputs.download-path }}/bundle/release/8vim-release.aab
-          track: ${{env.is_release  == true && 'alpha' || 'internal'}}
+          track: ${{contains(inputs.version_name, 'rc') && 'internal' || 'alpha'}}
           whatsNewDirectory: distribution/whatsnew
           mappingFile: ${{ steps.artifact.outputs.download-path }}/mapping/release/mapping.txt
   f_droid:
@@ -87,6 +84,8 @@ jobs:
       issues: read
       pull-requests: read
       contents: write
+    env:
+      target: ${{contains(inputs.version_name, 'rc') && 'rc' || 'release'}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -101,7 +100,7 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v4
         with:
           configuration: changelog-configuration.json
-          ignorePreReleases: "${{env.is_release}}"
+          ignorePreReleases: "${{!contains(inputs.version_name, 'rc')}}"
           toTag: v${{inputs.version_name}}
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
