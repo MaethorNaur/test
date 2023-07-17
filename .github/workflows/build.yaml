@@ -56,6 +56,10 @@ jobs:
         with:
           name: artifact
           if-no-files-found: ignore
-          path: |
-            8vim/build/outputs/*/${{inputs.target}}/8vim-${{inputs.target}}.*
-            8vim/build/outputs/mapping/${{inputs.target}}/mapping.txt
+          path: 8vim/build/outputs/*/${{inputs.target}}/8vim-${{inputs.target}}.*
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifact
+          if-no-files-found: ignore
+          path: 8vim/build/outputs/mapping/${{inputs.target}}/mapping.txt
