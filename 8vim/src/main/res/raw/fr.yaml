@@ -1,7 +1,3 @@
-info:
-  contact:
-    name: fr
-    email: test@test.com
 layers:
   default:
     sectors:
