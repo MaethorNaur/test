@@ -10,7 +10,7 @@ on:
         required: true
         type: string
 env:
-  is_release: ${{contains(inputs.version_name, 'rc') == false}}
+  is_release: ${{!contains(inputs.version_name, 'rc')}}
   target: ${{contains(inputs.version_name, 'rc') && 'rc' || 'release'}}
 jobs:
   build_rc:
@@ -101,7 +101,7 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v4
         with:
           configuration: changelog-configuration.json
-          ignorePreReleases: "${{env.is_release == true}}"
+          ignorePreReleases: "${{env.is_release}}"
           toTag: v${{inputs.version_name}}
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
@@ -110,5 +110,5 @@ jobs:
         with:
           body: ${{steps.github_release.outputs.changelog}}
           files: ${{ steps.artifact.outputs.download-path }}/apk/${{env.target}}/8vim-${{env.target}}.apk
-          prerelease: ${{env.is_release == false}}
+          prerelease: "${{env.is_release == false}}"
           tag_name: v${{inputs.version_name}}
