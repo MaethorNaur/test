@@ -75,6 +75,18 @@ jobs:
       - name: Get artifact link
         id: artifact
         run: |
+          curl \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ github.token }}" \
+          -s \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}"
+
+          curl \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ github.token }}" \
+          -s \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/artifacts"
+
           check_suite_id=$(curl \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
