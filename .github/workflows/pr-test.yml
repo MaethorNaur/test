@@ -79,7 +79,7 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
           -s \
-          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/artifacts" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}" \
           | jq -j '.check_suite_id')
 
           curl \
