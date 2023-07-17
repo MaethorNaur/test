@@ -65,7 +65,8 @@ jobs:
       target: debug
     secrets: inherit
   upload_artifact:
-    needs: [build]
+    if: ${{ !cancelled() && needs.build.result=='success' && (needs.test.result == 'success' || needs.validate_layouts.result == 'success') }}
+    needs: [build, validate_layouts, test]
     runs-on: ubuntu-latest
     steps:
       - run: echo ${{ github.event.number }} > ./pr_number
