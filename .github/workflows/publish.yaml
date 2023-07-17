@@ -10,7 +10,7 @@ on:
         required: true
         type: string
 env:
-  is_release: ${{!contains(inputs.version_name, 'rc')}}
+  is_release: ${{contains(inputs.version_name, 'rc') == false}}
   target: ${{contains(inputs.version_name, 'rc') && 'rc' || 'release'}}
 jobs:
   build_rc:
@@ -101,7 +101,7 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v4
         with:
           configuration: changelog-configuration.json
-          ignorePreReleases: "${{env.is_release}}"
+          ignorePreReleases: "${{env.is_release == true}}"
           toTag: v${{inputs.version_name}}
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
