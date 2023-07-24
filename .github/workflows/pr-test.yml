@@ -17,6 +17,7 @@ jobs:
     outputs:
       src: ${{ steps.changes.outputs.src }}
       yaml: ${{ steps.changes.outputs.yaml }}
+      metadata: ${{ steps.changes.outputs.metadata }}
       yaml_files: ${{ steps.changes.outputs.yaml_files }}
     steps:
       - uses: dorny/paths-filter@v2
@@ -24,6 +25,8 @@ jobs:
         with:
           list-files: json
           filters: |
+            metadata:
+              - 'metadata/**/changelogs/*.txt'
             src:
               - '8vim/**/*.java'
               - '8vim/**/*.kt'
