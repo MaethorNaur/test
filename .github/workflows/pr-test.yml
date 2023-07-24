@@ -55,8 +55,9 @@ jobs:
           XML: ${{steps.xml.outputs.info}}
         with:
           script: |
-            // console.log(process.env)
-            const globber = await glob.create("8vim/src/main/res/raw/*.ya?ml")
+            const xml = process.env.XML.split(',')
+            console.log(xml)
+            const globber = await glob.create("8vim/src/main/res/raw/*.yaml")
             const files = await globber.glob()
             console.log(files)
       # - uses: 8VIM/json-yaml-validate@main
