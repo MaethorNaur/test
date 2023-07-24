@@ -57,7 +57,8 @@ jobs:
           script: |
             const xml = process.env.XML.split(',')
             for(const lang of xml) {
-              const globber = await glob.create(`8vim/src/main/res/raw/${lang}.ya?ml`)
+              const pattern = [`8vim/src/main/res/raw/${lang}.yaml`,`8vim/src/main/res/raw/${lang}.yml`]
+              const globber = await glob.create(pattern.join("\n"))
               const files = await globber.glob()
               console.log(files)
             }
