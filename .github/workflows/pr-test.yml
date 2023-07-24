@@ -37,7 +37,8 @@ jobs:
               - modified: '8vim/src/main/resources/schema.json'
       - if: ${{ steps.changes.outputs.metadata == 'true' }}
         run: |
-          echo "metadata changed"
+          echo "You cannot change the changelogs manually"
+          exit 1
   validate_layouts:
     needs: changes
     if: ${{ needs.changes.outputs.yaml == 'true' }}
