@@ -17,13 +17,14 @@ jobs:
     outputs:
       src: ${{ steps.changes.outputs.src }}
       yaml: ${{ steps.changes.outputs.yaml }}
-      yaml_files: ${{ steps.changes.outputs.yaml_files }}
     steps:
       - uses: dorny/paths-filter@v2
         id: changes
         with:
           list-files: json
           filters: |
+            metadata:
+              - 'metadata/**/changelogs/*.txt'
             src:
               - '8vim/**/*.java'
               - '8vim/**/*.kt'
@@ -34,6 +35,9 @@ jobs:
               - '8vim/src/main/res/raw/*.yaml'
               - added|modified: '8vim/src/main/res/raw/*.yml'
               - modified: '8vim/src/main/resources/schema.json'
+      - if: ${{ steps.changes.outputs.metadata == 'true' }}
+        run: |
+          echo "metadata changed"
   validate_layouts:
     needs: changes
     if: ${{ needs.changes.outputs.yaml == 'true' }}
@@ -46,12 +50,27 @@ jobs:
       - uses: mavrosxristoforos/get-xml-info@1.1.1
         id: xml
         with:
-          xml-file: "8vim/src/main/res/values/strings.xml"
-          xpath: "//resources/string-array[@name='keyboard_layouts_id']/item"
-
-      - run: |
-          echo "${{needs.changes.outputs.yaml_files}}"
-          echo "${{steps.xml.outcome.info}}"
+          xml-file: 8vim/src/main/res/values/strings.xml
+          xpath: //resources/string-array[@name='keyboard_layouts_id']/item
+      - uses: actions/github-script@v6
+        env:
+          XML: ${{steps.xml.outputs.info}}
+        with:
+          script: |
+            let failed = false
+            const xml = process.env.XML.split(',')
+            for(const lang of xml) {
+              const pattern = [`8vim/src/main/res/raw/${lang}.yaml`,`8vim/src/main/res/raw/${lang}.yml`]
+              const globber = await glob.create(pattern.join("\n"))
+              const files = await globber.glob()
+              if(files.length!=1) {
+                core.error(`Missing language layout for ${lang}`)
+                failed = true
+              }
+            }
+            if(failed) {
+              core.setFailed("Missing layouts")
+            }
       # - uses: 8VIM/json-yaml-validate@main
       #   with:
       #     json_schema: ./8vim/src/main/resources/schema.json
