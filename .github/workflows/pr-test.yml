@@ -31,7 +31,7 @@ jobs:
               - '8vim/**/*.pro'
               - '**.gradle'
             yaml:
-              - added|modified: '8vim/src/main/res/raw/*.yaml'
+              - '8vim/src/main/res/raw/*.yaml'
               - added|modified: '8vim/src/main/res/raw/*.yml'
               - modified: '8vim/src/main/resources/schema.json'
   validate_layouts:
