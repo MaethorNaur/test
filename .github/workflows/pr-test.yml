@@ -48,7 +48,7 @@ jobs:
       - uses: mavrosxristoforos/get-xml-info@1.1.1
         with:
           xml-file: "8vim/src/main/res/values/strings.xml"
-          xpath: "//resources/string-array[@name='keyboard_layouts_id']/item/text()"
+          xpath: "//resources/string-array[@name='keyboard_layouts_id']/item"
       # - uses: 8VIM/json-yaml-validate@main
       #   with:
       #     json_schema: ./8vim/src/main/resources/schema.json
