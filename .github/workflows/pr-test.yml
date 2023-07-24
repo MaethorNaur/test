@@ -18,7 +18,6 @@ jobs:
       src: ${{ steps.changes.outputs.src }}
       yaml: ${{ steps.changes.outputs.yaml }}
       metadata: ${{ steps.changes.outputs.metadata }}
-      yaml_files: ${{ steps.changes.outputs.yaml_files }}
     steps:
       - uses: dorny/paths-filter@v2
         id: changes
@@ -56,10 +55,11 @@ jobs:
           XML: ${{steps.xml.outputs.info}}
         with:
           script: |
-            console.log(process.env)
-      - run: |
-          echo "${{needs.changes.outputs.yaml_files}}"
-          echo "${{steps.xml.outputs.info}}"
+            // console.log(process.env)
+            const globber = glob.create("8vim/src/main/res/raw/*.ya?ml", globOptions)
+            for await (const file of globber.globGenerator()) {
+              console.log(file)
+            }
       # - uses: 8VIM/json-yaml-validate@main
       #   with:
       #     json_schema: ./8vim/src/main/resources/schema.json
