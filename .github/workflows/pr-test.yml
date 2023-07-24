@@ -44,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          echo "${{needs.changed.outputs.yaml_files}}"
+          echo "${{needs.changes.outputs.yaml_files}}"
 
       # - uses: 8VIM/json-yaml-validate@main
       #   with:
