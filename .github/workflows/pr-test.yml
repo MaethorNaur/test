@@ -91,7 +91,7 @@ jobs:
           cache: gradle
       - run: ./gradlew check
   build:
-    if: ${{ !cancelled() && needs.test.result != 'failure' && needs.validate_layouts.result != 'failure' }}
+    if: ${{ !cancelled() && (needs.test.result == 'success' || needs.validate_layouts.result == 'success') }}
     needs: [validate_layouts, test]
     uses: ./.github/workflows/build.yaml
     with:
