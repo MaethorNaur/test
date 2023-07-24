@@ -55,6 +55,7 @@ jobs:
           XML: ${{steps.xml.outputs.info}}
         with:
           script: |
+            let failed = false
             const xml = process.env.XML.split(',')
             for(const lang of xml) {
               const pattern = [`8vim/src/main/res/raw/${lang}.yaml`,`8vim/src/main/res/raw/${lang}.yml`]
@@ -62,7 +63,11 @@ jobs:
               const files = await globber.glob()
               if(files.length!=1) {
                 core.error(`Missing language layout for ${lang}`)
+                failed = true
               }
+            }
+            if(failed) {
+              core.setFailed("Missing layouts")
             }
       # - uses: 8VIM/json-yaml-validate@main
       #   with:
