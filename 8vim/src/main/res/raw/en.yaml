@@ -13,7 +13,6 @@ layers:
             - lower_case: r
             - lower_case: x
             - lower_case: "?"
-              upper_case: "*"
       top:
         parts:
           right:
