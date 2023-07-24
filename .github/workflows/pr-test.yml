@@ -17,7 +17,6 @@ jobs:
     outputs:
       src: ${{ steps.changes.outputs.src }}
       yaml: ${{ steps.changes.outputs.yaml }}
-      metadata: ${{ steps.changes.outputs.metadata }}
     steps:
       - uses: dorny/paths-filter@v2
         id: changes
@@ -36,6 +35,9 @@ jobs:
               - '8vim/src/main/res/raw/*.yaml'
               - added|modified: '8vim/src/main/res/raw/*.yml'
               - modified: '8vim/src/main/resources/schema.json'
+      - if: ${{ steps.changes.outputs.metadata == 'true' }}
+        run: |
+          echo "metadata changed"
   validate_layouts:
     needs: changes
     if: ${{ needs.changes.outputs.yaml == 'true' }}
@@ -48,8 +50,8 @@ jobs:
       - uses: mavrosxristoforos/get-xml-info@1.1.1
         id: xml
         with:
-          xml-file: "8vim/src/main/res/values/strings.xml"
-          xpath: "//resources/string-array[@name='keyboard_layouts_id']/item"
+          xml-file: 8vim/src/main/res/values/strings.xml
+          xpath: //resources/string-array[@name='keyboard_layouts_id']/item
       - uses: actions/github-script@v6
         env:
           XML: ${{steps.xml.outputs.info}}
