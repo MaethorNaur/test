@@ -52,9 +52,11 @@ jobs:
           xml-file: "8vim/src/main/res/values/strings.xml"
           xpath: "//resources/string-array[@name='keyboard_layouts_id']/item"
       - uses: actions/github-script@v6
+        env:
+          XML: ${{steps.xml.outputs.info}}
         with:
           script: |
-            console.log(context)
+            console.log(process.env)
       - run: |
           echo "${{needs.changes.outputs.yaml_files}}"
           echo "${{steps.xml.outputs.info}}"
