@@ -60,7 +60,9 @@ jobs:
               const pattern = [`8vim/src/main/res/raw/${lang}.yaml`,`8vim/src/main/res/raw/${lang}.yml`]
               const globber = await glob.create(pattern.join("\n"))
               const files = await globber.glob()
-              console.log(files)
+              if(files.length!=1) {
+                core.error(`Missing language layout for ${lang}`)
+              }
             }
       # - uses: 8VIM/json-yaml-validate@main
       #   with:
