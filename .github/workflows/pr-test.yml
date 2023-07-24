@@ -57,9 +57,8 @@ jobs:
           script: |
             // console.log(process.env)
             const globber = await glob.create("8vim/src/main/res/raw/*.ya?ml")
-            for await (const file of globber.globGenerator()) {
-              console.log(file)
-            }
+            const files = await globber.glob()
+            console.log(files)
       # - uses: 8VIM/json-yaml-validate@main
       #   with:
       #     json_schema: ./8vim/src/main/resources/schema.json
