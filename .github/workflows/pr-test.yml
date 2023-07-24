@@ -56,7 +56,7 @@ jobs:
         with:
           script: |
             // console.log(process.env)
-            const globber = glob.create("8vim/src/main/res/raw/*.ya?ml", globOptions)
+            const globber = glob.create("8vim/src/main/res/raw/*.ya?ml")
             for await (const file of globber.globGenerator()) {
               console.log(file)
             }
