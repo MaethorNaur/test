@@ -45,7 +45,10 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           echo "${{needs.changes.outputs.yaml_files}}"
-
+      - uses: mavrosxristoforos/get-xml-info@1.1.1
+        with:
+          xml-file: "8vim/src/main/res/values/strings.xml"
+          xpath: "//resources"
       # - uses: 8VIM/json-yaml-validate@main
       #   with:
       #     json_schema: ./8vim/src/main/resources/schema.json
