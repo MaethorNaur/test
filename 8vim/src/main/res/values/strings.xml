@@ -44,4 +44,8 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="todo">TODO</string>
+    <string-array name="keyboard_layouts_id">
+        <item>en</item>
+        <item>fr</item>
+    </string-array>
 </resources>
