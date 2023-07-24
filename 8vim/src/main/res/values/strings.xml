@@ -45,36 +45,7 @@
     </string>
     <string name="todo">TODO</string>
     <string-array name="keyboard_layouts_id">
-        <item>af</item>
-        <item>br</item>
-        <item>bs</item>
-        <item>ca</item>
-        <item>cs</item>
-        <item>da</item>
-        <item>de</item>
         <item>en</item>
-        <item>eo</item>
-        <item>es</item>
-        <item>fi</item>
-        <item>fo</item>
         <item>fr</item>
-        <item>ga</item>
-        <item>he</item>
-        <item>hr</item>
-        <item>hu</item>
-        <item>is</item>
-        <item>it</item>
-        <item>lt</item>
-        <item>lv</item>
-        <item>nl</item>
-        <item>no</item>
-        <item>pl</item>
-        <item>pt</item>
-        <item>sk</item>
-        <item>sq</item>
-        <item>sr</item>
-        <item>sv</item>
-        <item>tr</item>
-        <item>uk</item>
     </string-array>
 </resources>
