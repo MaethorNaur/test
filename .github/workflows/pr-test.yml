@@ -17,6 +17,7 @@ jobs:
     outputs:
       src: ${{ steps.changes.outputs.src }}
       yaml: ${{ steps.changes.outputs.yaml }}
+      yaml_files: ${{ steps.changes.outputs.yaml_files }}
     steps:
       - uses: dorny/paths-filter@v2
         id: changes
