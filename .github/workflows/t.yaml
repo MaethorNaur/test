@@ -1,0 +1,13 @@
+name: t
+on:
+  workflow_call:
+    inputs:
+      message:
+        type: string
+        required: true
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "${{join(fromJSON(inputs.message),'\n')}}"
