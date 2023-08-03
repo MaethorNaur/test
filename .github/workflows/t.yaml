@@ -10,5 +10,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo -e "${{join(fromJSON(inputs.message),'\n')}}" > a.txt
+          echo -e "${{inputs.message}}" > a.txt
           cat a.txt
