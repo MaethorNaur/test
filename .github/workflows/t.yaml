@@ -1,6 +1,6 @@
 name: t
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       message:
         type: string
