@@ -2,13 +2,13 @@ name: t
 on:
   workflow_dispatch:
     inputs:
-      message:
-        type: string
-        required: true
+      a:
+        type: boolean
+      b:
+        type: boolean
 jobs:
   p:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo -e "${{inputs.message}}" > a.txt
-          cat a.txt
+          echo "${{inputs.a}} ${{input.b}}"
