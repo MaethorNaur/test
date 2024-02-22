@@ -14,4 +14,6 @@ jobs:
         with:
           title: ${{inputs.a}}
           state: closed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           #${{ secrets.PAT }}
