@@ -10,10 +10,10 @@ jobs:
   p:
     runs-on: ubuntu-latest
     steps:
-      - uses: julbme/gh-action-manage-milestone@v1
+      - uses: Beakyn/gha-close-milestone@v1.1.1
         with:
-          title: ${{inputs.a}}
-          state: closed
+          milestone-title: ${{inputs.a}}
+          repository: ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ github.token  }}
           #${{ secrets.PAT }}
