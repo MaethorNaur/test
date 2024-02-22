@@ -15,5 +15,5 @@ jobs:
           milestone-title: "${{inputs.a}}"
           repository: ${{ github.repository }}
         env:
-          GITHUB_TOKEN: ${{ github.token  }}
+          GITHUB_TOKEN: ${{ secrets.PAT   }}
           #${{ secrets.PAT }}
