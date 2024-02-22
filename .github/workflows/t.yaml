@@ -10,10 +10,13 @@ jobs:
   p:
     runs-on: ubuntu-latest
     steps:
+      - uses: lee-dohm/close-matching-issues@v2
+        with:
+          query: "milestone:${{inputs.a}}"
+          token: ${{ secrets.PAT  }}
       - uses: Beakyn/gha-close-milestone@v1.1.1
         with:
           milestone-title: "${{inputs.a}}"
           repository: ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.PAT   }}
-          #${{ secrets.PAT }}
