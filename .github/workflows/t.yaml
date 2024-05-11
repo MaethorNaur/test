@@ -1,22 +1,20 @@
 name: t
-on:
-  workflow_dispatch:
-    inputs:
-      a:
-        type: string
-      b:
-        type: boolean
+on: [workflow_dispatch]
+
 jobs:
   p:
     runs-on: ubuntu-latest
+    outputs:
+      a: ${{steps.step.a}}
+      b: ${{steps.step.b}}
     steps:
-      - uses: lee-dohm/close-matching-issues@v2
-        with:
-          query: "milestone:${{inputs.a}}"
-          token: ${{ secrets.PAT  }}
-      - uses: Beakyn/gha-close-milestone@v1.1.1
-        with:
-          milestone-title: "${{inputs.a}}"
-          repository: ${{ github.repository }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT   }}
+      - id: step
+        run: |
+          echo "a=1"  >> $GITHUB_OUTPUT
+  o:
+    runs-on: ubuntu-latest
+    needs: [p]
+    steps:
+      - run: |
+          echo "a: ${{needs.p.outputs.a}}"
+          echo "b: ${{needs.p.outputs.b}}"
