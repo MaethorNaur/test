@@ -12,11 +12,8 @@ jobs:
         run: |
           echo "a=1"  >> $GITHUB_OUTPUT
   o:
-    runs-on: ubuntu-latest
     needs: [p]
-    steps:
-      - env:
-          B: ${{needs.p.outputs.b}}
-        run: |
-          echo "a: ${{needs.p.outputs.a}}"
-          echo "b: $B"
+    uses: ./.github/workflows/s.yaml
+    with:
+      a: ${{needs.p.outputs.a}}
+      b: ${{needs.p.outputs.b}}

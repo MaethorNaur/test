@@ -1,0 +1,19 @@
+name: Sub
+
+on: 
+    workflow_call: 
+        inputs:
+            a:
+                type: string
+                default: ''
+            b:
+                type: number
+                default: -1
+
+jobs:
+  o:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "a: ${{inputs.a}}"
+          echo "b: ${{inputs.b}}"
