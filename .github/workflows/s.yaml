@@ -9,7 +9,7 @@ jobs:
   l:
     runs-on: ubuntu-latest
     outputs:
-      metadata: ${{steps.metadata.outputs.metadata}}
+      metadata: ${{fromJson(steps.metadata.outputs.metadata)}}
     steps:
         - id: metadata
           uses: redhat-plumbers-in-action/gather-pull-request-metadata@v1
