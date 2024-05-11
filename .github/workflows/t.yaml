@@ -14,4 +14,4 @@ jobs:
     steps:
       - id: step
         run: |
-          echo "a=yolo"  >> $GITHUB_OUTPUT
+          echo yes
