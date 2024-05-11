@@ -9,7 +9,7 @@ jobs:
   l:
     runs-on: ubuntu-latest
     outputs:
-      metadata: ${{fromJson(steps.metadata.outputs.metadata)}}
+      metadata: ${{steps.metadata.outputs.metadata}}
     steps:
         - id: metadata
           uses: redhat-plumbers-in-action/gather-pull-request-metadata@v1
@@ -18,7 +18,7 @@ jobs:
   il:
     runs-on: ubuntu-latest
     needs: [l]
-    if: ${{contains(needs.l.outputs.metadata.labels.*.name,'bug')}}
+    if: ${{contains(fromJson(needs.l.outputs.metadata).labels.*.name,'bug')}}
     steps:
       - run: echo "label"
   p:
