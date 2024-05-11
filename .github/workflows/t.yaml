@@ -10,7 +10,7 @@ jobs:
     steps:
       - id: step
         run: |
-          echo "b=1"  >> $GITHUB_OUTPUT
+          echo "a=yolo"  >> $GITHUB_OUTPUT
   o:
     needs: [p]
     uses: ./.github/workflows/s.yaml
