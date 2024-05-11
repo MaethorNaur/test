@@ -6,8 +6,27 @@ on:
     types: [completed]
 
 jobs:
+  p:
+    runs-on: ubuntu-latest
+    outputs:
+      a: ${{steps.step.outputs.a}}
+      b: ${{steps.step.outputs.b}}
+    steps:
+      - id: step
+        run: |
+          echo "a=yolo"  >> $GITHUB_OUTPUT
   o:
     runs-on: ubuntu-latest
+    needs: [p]
+    if: ${{needs.p.outputs.b != null}}
     steps:
       - run: |
-          echo "${{github.event.workflow_run.pull_requests}}"
+          echo "${{github.event.workflow_run.head_sha}}"
+  no:
+    runs-on: ubuntu-latest
+    needs: [p]
+    if: ${{needs.p.outputs.b == null}}
+    steps:
+      - run: |
+          echo "empty"
+
