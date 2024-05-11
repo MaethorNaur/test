@@ -5,8 +5,8 @@ jobs:
   p:
     runs-on: ubuntu-latest
     outputs:
-      a: ${{steps.step.a}}
-      b: ${{steps.step.b}}
+      a: ${{steps.step.outputs.a}}
+      b: ${{steps.step.outputs.b}}
     steps:
       - id: step
         run: |
