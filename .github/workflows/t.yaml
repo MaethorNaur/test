@@ -1,5 +1,9 @@
 name: t
-on: [workflow_dispatch]
+on: 
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+
 
 jobs:
   p:
@@ -11,9 +15,3 @@ jobs:
       - id: step
         run: |
           echo "a=yolo"  >> $GITHUB_OUTPUT
-  o:
-    needs: [p]
-    uses: ./.github/workflows/s.yaml
-    with:
-      a: ${{needs.p.outputs.a}}
-      b: ${{fromJson(needs.p.outputs.b || -1)}}
