@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "${{github.event.workflow_run.head_sha}}"
+          echo "${{github.event.workflow_run.pull_requests}}"
