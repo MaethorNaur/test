@@ -16,4 +16,4 @@ jobs:
     uses: ./.github/workflows/s.yaml
     with:
       a: ${{needs.p.outputs.a}}
-      b: ${{needs.p.outputs.b || -1}}
+      b: ${{fromJson(needs.p.outputs.b || -1)}}
